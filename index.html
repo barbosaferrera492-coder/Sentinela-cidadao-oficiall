@@ -117,13 +117,10 @@
         const bancoDeDados = firebase.database();
 
         // 🚫 LISTA NEGRA OFICIAL - VOCÊ ADMINISTRA AQUI
-        // COLOQUE AQUI OS SITES E PIX QUE VOCÊ TEM CERTEZA QUE É GOLPE
         const listaOficial = [
             "pixdomilhao",
             "ganhedinheiro",
             "123.456.789-09"
-            "voce.ganhou.1000.reais"
-            // ADICIONE MAIS ABAIXO SE PRECISAR, SEPARADO POR VÍRGULA
         ];
 
         // 📋 FUNÇÃO PARA TROCAR DE ABA
@@ -137,7 +134,7 @@
             else document.querySelectorAll('.aba')[1].classList.add('ativa');
         }
 
-        // ✅ FUNÇÃO DE LIMPEZA TOTAL - REMOVE TUDO O QUE NÃO É LETRA
+        // ✅ FUNÇÃO DE LIMPEZA TOTAL
         function limparTexto(texto) {
             if (!texto) return "";
             return texto.toString().toLowerCase()
@@ -149,7 +146,7 @@
                 .trim();
         }
 
-        // ✅ FUNÇÃO DE VERIFICAÇÃO - MODO SIMPLES E FORTE
+        // ✅ FUNÇÃO DE VERIFICAÇÃO REFEITA DO ZERO
         async function verificarSeguranca() {
             const entrada = document.getElementById('entradaUsuario').value.trim();
             const resultado = document.getElementById('resultado');
@@ -169,42 +166,24 @@
             let encontrado = false;
             let motivo = "";
 
-            // 1. PRIMEIRO VERIFICA NA LISTA QUE VOCÊ COLOCOU (GARANTIDO)
+            console.log("Procurando por: " + entradaLimpa);
+
+            // 1. VERIFICA NA LISTA OFICIAL (MODO FORTE)
             for (let i = 0; i < listaOficial.length; i++) {
-                const itemLimpo = limparTexto(listaOficial[i]);
-                if (entradaLimpa.includes(itemLimpo)) {
+                const palavraChave = limparTexto(listaOficial[i]);
+                
+                console.log("Comparando com: " + palavraChave);
+
+                // SE A FRASE QUE VOCÊ DIGITOU CONTIVER A PALAVRA DA LISTA
+                if (entradaLimpa.includes(palavraChave)) {
                     encontrado = true;
-                    motivo = "Golpe Confirmado pela Administração";
-                    break; // Achou, já pode parar
+                    motivo = "Golpe Confirmado";
+                    console.log(">>> ENCONTROU! <<<");
+                    break;
                 }
             }
 
-            // 2. SE NÃO ACHOU, VAI VERIFICAR NO BANCO DE DADOS
-            if (!encontrado) {
-                try {
-                    const snapshot = await bancoDeDados.ref('denuncias').once('value');
-                    const dados = snapshot.val();
-
-                    if (dados) {
-                        // Pega cada item salvo no banco
-                        for (let key in dados) {
-                            let item = dados[key];
-                            let itemSalvoLimpo = limparTexto(item.valor);
-                            
-                            // Compara
-                            if (itemSalvoLimpo.includes(entradaLimpa)) {
-                                encontrado = true;
-                                motivo = "Denunciado por usuários";
-                                break; // Achou, já pode parar
-                            }
-                        }
-                    }
-                } catch (erro) {
-                    console.log("Sem conexão com nuvem, usando base local.");
-                }
-            }
-
-            // 3. MOSTRA O RESULTADO FINAL
+            // 2. RESULTADO FINAL
             if(encontrado) {
                 resultado.innerHTML = `⛔ ALERTA GRAVE! ⛔<br><br>IDENTIFICADO COMO:<br><strong style="font-size:20px;">${motivo}</strong><br><br>NÃO CONFIE!`;
                 resultado.className = "perigo";
