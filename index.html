@@ -275,7 +275,7 @@
         }
 
         function extrairLink(texto) {
-            const regex = https?:\/\/[^\s]+/g;
+            const regex = /https?:\/\/[^\s]+/g;
             const encontrados = texto.match(regex);
             return encontrados ? encontrados[0] : null;
         }
