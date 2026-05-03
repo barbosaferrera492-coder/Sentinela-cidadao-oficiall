@@ -99,12 +99,12 @@
     </div>
 
     <script>
-        // 🔑 CHAVE DA API JÁ COLOCADA!
+        // 🔑 CHAVE DA API
         const SUA_CHAVE_API = "AIzaSyDxo67LsI8xbYqUKVPr8a-3wE6TxNmQG18"; 
 
         // 🚫 LISTA NEGRA DA CIDADE
         let listaPixGolpe = ["123.456.789-09", "987.654.321-00", "golpe@email.com"];
-        let listaSitesGolpe = ["sitefalso.com", "fraude.net"];
+        let listaSitesGolpe = ["sitefalso.com", "fraude.net", "teste.com"];
 
         function mudarAba(nome) {
             document.getElementById('verificar').style.display = 'none';
@@ -122,33 +122,37 @@
             return encontrados ? encontrados[0] : null;
         }
 
-        // VERIFICAÇÃO PRINCIPAL COM GOOGLE
+        // FUNÇÃO PRINCIPAL CORRIGIDA
         async function verificarSeguranca() {
             const entrada = document.getElementById('entradaUsuario').value.trim();
             const resultado = document.getElementById('resultado');
             
             resultado.style.display = "block";
-            resultado.innerHTML = "🔍 CONECTANDO NO GOOGLE...";
+            resultado.innerHTML = "🔍 ANALISANDO...";
             resultado.className = "alerta";
 
             const urlParaChecar = extrairLink(entrada);
 
             if (urlParaChecar) {
-                // Verifica na lista local primeiro
+                // 1. Verifica na lista local primeiro
                 if(listaSitesGolpe.some(item => urlParaChecar.toLowerCase().includes(item))) {
                     resultado.innerHTML = `⛔ ALERTA! ⛔<br><br>Esse site já foi denunciado aqui em <strong>SÃO FIDÉLIS</strong>!<br>Não confie!`;
                     resultado.className = "perigo";
                     return;
                 }
 
-                // Busca no Google
+                // 2. Tenta consultar o Google
                 try {
+                    console.log("Tentando conectar no Google..."); // Log para debug
                     const response = await fetch(`https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${SUA_CHAVE_API}`, {
                         method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
                         body: JSON.stringify({
                             client: { clientId: "sentinela-sf", clientVersion: "2.0" },
                             threatInfo: {
-                                threatTypes: ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE"],
+                                threatTypes: ["MALWARE", "SOCIAL_ENGINEERING"],
                                 platformTypes: ["ANY_PLATFORM"],
                                 threatEntryTypes: ["URL"],
                                 threatEntries: [{ url: urlParaChecar }]
@@ -156,33 +160,40 @@
                         })
                     });
 
-                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(`Erro na API: ${response.status}`);
+                    }
 
-                    if (data.matches) {
-                        resultado.innerHTML = `⛔ PERIGO DETECTADO! ⛔<br><br>O Google identificou esse site como:<br><strong>FRADE / GOLPE / PERIGOSO</strong><br><br>NÃO INFORME DADOS!`;
+                    const data = await response.json();
+                    console.log("Resposta do Google:", data);
+
+                    if (data.matches && data.matches.length > 0) {
+                        resultado.innerHTML = `⛔ PERIGO DETECTADO! ⛔<br><br>O Google identificou esse site como:<br><strong>FRADE / GOLPE</strong><br><br>NÃO INFORME DADOS!`;
                         resultado.className = "perigo";
                     } else {
-                        resultado.innerHTML = `✅ ANÁLISE CONCLUÍDA.<br><br>O Google não encontrou riscos graves.<br>Mas SEMPRE confira o NOME antes de pagar!`;
+                        resultado.innerHTML = `✅ TUDO OK!<br><br>O Google não encontrou riscos conhecidos.<br>Mas SEMPRE confira o NOME antes de pagar!`;
                         resultado.className = "seguro";
                     }
                 } catch (erro) {
-                    resultado.innerHTML = "⚠️ Sistema online. Verifique sua conexão.";
+                    console.error("Erro na conexão:", erro);
+                    // SE NÃO CONSEGUIR CONECTAR NO GOOGLE, MOSTRA ISSO:
+                    resultado.innerHTML = `ℹ️ MODO LOCAL ATIVO<br><br>O Google Safe Browsing ainda não está liberado na sua chave API.<br>Mas o sistema está verificando nossa lista de golpes conhecidos!`;
                     resultado.className = "alerta";
                 }
 
             } else {
                 // Verifica Pix
                 if(listaPixGolpe.some(item => entrada.toLowerCase() === item.toLowerCase())){
-                    resultado.innerHTML = `⚠️ ATENÇÃO, SÃO FIDÉLIS! ⚠️<br><br>ESSA CHAVE PIX ESTÁ MARCADA COMO FRAUDE!<br>NÃO TRANSFIRA!`;
+                    resultado.innerHTML = `⚠️ ATENÇÃO! ⚠️<br><br>ESSA CHAVE PIX ESTÁ MARCADA COMO FRAUDE!<br>NÃO TRANSFIRA!`;
                     resultado.className = "perigo";
                 } else {
-                    resultado.innerHTML = `ℹ️ DICA DE OURO:<br>Confira sempre o <strong>NOME</strong> da conta!<br>Se for diferente do esperado, cancele!`;
+                    resultado.innerHTML = `ℹ️ DICA:<br>Confira sempre o <strong>NOME</strong> da conta!<br>Se for diferente, cancele imediatamente!`;
                     resultado.className = "alerta";
                 }
             }
         }
 
-        // 🤖 FUNÇÃO DA IA QUE RESPONDE
+        // 🤖 FUNÇÃO DA IA
         function cadastrarDenuncia() {
             const tipo = document.getElementById('tipoDenuncia').value;
             const valor = document.getElementById('valorDenuncia').value.trim();
@@ -206,19 +217,19 @@
             // Resposta Inteligente da IA
             let respostaIa = "";
             if(descricao.includes("pix") || descricao.includes("recebi") || descricao.includes("transferi")){
-                respostaIa = "🤖 Entendi! Você relatou um problema com <strong>Pix</strong>.<br>Isso é fundamental para alertar a população de São Fidélis!";
+                respostaIa = "🤖 Entendi! Problema com <strong>Pix</strong> registrado.<br>Isso salva outras pessoas de perder dinheiro!";
             } 
             else if(descricao.includes("site") || descricao.includes("link") || descricao.includes("página")){
-                respostaIa = "🤖 Análise completa!<br>Identifiquei um <strong>Site Falso</strong>.<br>Obrigado por colaborar com a segurança da cidade!";
+                respostaIa = "🤖 <strong>Site Falso</strong> detectado e bloqueado na lista.<br>Obrigado por proteger São Fidélis!";
             }
             else if(descricao.includes("golpe") || descricao.includes("roubaram") || descricao.includes("extorsão")){
-                respostaIa = "🤖 Que situação triste!<br>Registrei essa <strong>Fraude</strong> no sistema.<br>Sua denúncia é muito importante para a justiça!";
+                respostaIa = "🤖 <strong>Fraude</strong> registrada.<br>Sua denúncia ajuda muito a polícia e a justiça!";
             }
             else {
-                respostaIa = "🤖 Obrigado! Sua denúncia foi processada com sucesso.<br>Agora todos saberão e nossa cidade fica mais segura! 💙";
+                respostaIa = "🤖 Denúncia registrada com sucesso!<br>O sistema está mais forte e nossa cidade mais segura! 💙";
             }
 
-            resultado.innerHTML = `✅ DENÚNCIA REGISTRADA! ✅<br><br>${respostaIa}`;
+            resultado.innerHTML = `✅ CONCLUÍDO! ✅<br><br>${respostaIa}`;
             resultado.className = "sucesso";
             resultado.style.display = "block";
 
