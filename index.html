@@ -4,57 +4,444 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentinela Cidadão - São Fidélis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --azul: #00529B;
+            --azul-escuro: #00264d;
+            --azul-profundo: #001830;
+            --dourado: #FFD700;
+            --dourado-suave: #FFC107;
+            --verde: #2ecc71;
+            --vermelho: #e74c3c;
+            --amarelo-alerta: #f39c12;
+            --branco: #ffffff;
+            --branco-suave: rgba(255,255,255,0.85);
+            --vidro: rgba(255,255,255,0.08);
+            --vidro-borda: rgba(255,255,255,0.15);
+        }
 
-    <!-- CSS EXTERNO -->
-    <link rel="stylesheet" href="css/style.css">
-<script src="js/script.js"></script>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background: var(--azul-profundo);
+            min-height: 100vh;
+            padding: 20px 16px 40px;
+            color: var(--branco);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fundo animado */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,82,155,0.5) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 80%, rgba(0,38,77,0.8) 0%, transparent 60%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Grade de pontos decorativa */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 28px 28px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            text-align: center;
+            padding: 36px 20px 28px;
+            margin-bottom: 6px;
+        }
+
+        .logo-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--azul), var(--azul-escuro));
+            border-radius: 24px;
+            font-size: 40px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 32px rgba(0,82,155,0.6), 0 0 0 1px var(--vidro-borda);
+            animation: pulsar 3s ease-in-out infinite;
+        }
+
+        @keyframes pulsar {
+            0%, 100% { box-shadow: 0 8px 32px rgba(0,82,155,0.6), 0 0 0 1px var(--vidro-borda); }
+            50% { box-shadow: 0 8px 48px rgba(0,82,155,0.9), 0 0 0 3px rgba(255,215,0,0.2); }
+        }
+
+        h1 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 2.4em;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .frase-cidade {
+            display: inline-block;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.9em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--dourado);
+            background: rgba(255,215,0,0.08);
+            border: 1px solid rgba(255,215,0,0.25);
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        /* ── CARD PRINCIPAL ── */
+        .card {
+            background: var(--vidro);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(16px);
+            margin-bottom: 16px;
+        }
+
+        /* ── CHAT IA ── */
+        .chat-ia {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .robo {
+            font-size: 32px;
+            flex-shrink: 0;
+            animation: balanco 2s ease-in-out infinite;
+        }
+
+        @keyframes balanco {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .texto-ia {
+            background: rgba(0,82,155,0.3);
+            border: 1px solid rgba(0,82,155,0.5);
+            padding: 14px 16px;
+            border-radius: 4px 16px 16px 16px;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .texto-ia strong {
+            color: var(--dourado);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── STATUS BADGE ── */
+        .badge-ativo {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(46,204,113,0.15);
+            border: 1px solid rgba(46,204,113,0.4);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.78em;
+            font-weight: 600;
+            color: #2ecc71;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-ativo::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: piscar 1.5s ease-in-out infinite;
+        }
+
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        /* ── ABAS ── */
+        .abas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .aba {
+            padding: 13px;
+            text-align: center;
+            cursor: pointer;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 1em;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 12px;
+            border: 1px solid var(--vidro-borda);
+            background: var(--vidro);
+            color: rgba(255,255,255,0.5);
+            transition: all 0.25s ease;
+        }
+
+        .aba:hover {
+            color: var(--branco);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .aba.ativa {
+            background: var(--dourado);
+            color: var(--azul-escuro);
+            border-color: var(--dourado);
+            box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+        }
+
+        /* ── CONTEÚDO ── */
+        .conteudo-aba {
+            display: none;
+            animation: aparecer 0.3s ease;
+        }
+
+        .conteudo-aba.ativa {
+            display: block;
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── INPUTS ── */
+        .grupo-input {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.75);
+            letter-spacing: 0.3px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--vidro-borda);
+            background: rgba(0,0,0,0.25);
+            color: var(--branco);
+            font-size: 15px;
+            font-family: 'Barlow', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--dourado);
+            box-shadow: 0 0 0 3px rgba(255,215,0,0.15);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+
+        select option {
+            background: var(--azul-escuro);
+            color: var(--branco);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        /* ── BOTÃO ── */
+        .btn-principal {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--dourado), var(--dourado-suave));
+            color: var(--azul-escuro);
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 20px rgba(255,215,0,0.25);
+        }
+
+        .btn-principal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255,215,0,0.4);
+        }
+
+        .btn-principal:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* ── RESULTADO ── */
+        #resultado, #resultadoDenuncia {
+            margin-top: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1.15em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            animation: aparecer 0.4s ease;
+        }
+
+        .seguro {
+            background: rgba(46,204,113,0.15);
+            border: 1px solid rgba(46,204,113,0.5);
+            color: #2ecc71;
+        }
+
+        .perigo {
+            background: rgba(231,76,60,0.15);
+            border: 1px solid rgba(231,76,60,0.5);
+            color: #ff6b6b;
+        }
+
+        .alerta {
+            background: rgba(243,156,18,0.15);
+            border: 1px solid rgba(243,156,18,0.5);
+            color: #f39c12;
+        }
+
+        .sucesso {
+            background: rgba(46,204,113,0.15);
+            border: 1px solid rgba(46,204,113,0.5);
+            color: #2ecc71;
+        }
+
+        /* ── AVISO DENÚNCIA ── */
+        .aviso-denuncia {
+            background: rgba(255,215,0,0.07);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-left: 3px solid var(--dourado);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            color: rgba(255,215,0,0.85);
+            font-size: 0.88em;
+            line-height: 1.6;
+        }
+
+        .aviso-denuncia strong {
+            color: var(--dourado);
+        }
+
+        /* ── RODAPÉ ── */
+        .rodape {
+            text-align: center;
+            margin-top: 24px;
+            padding: 16px;
+            font-size: 0.78em;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.5px;
+            border-top: 1px solid var(--vidro-borda);
+        }
+
+        /* ── DIVISOR ── */
+        .divisor {
+            height: 1px;
+            background: var(--vidro-borda);
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <div class="logo">🛡️</div>
-            <h1>Sentinela Cidadão</h1>
-            <p class="frase-cidade">💙 A CIDADE DE SÃO FIDÉLIS ESTÁ PROTEGIDA! 🤍</p>
-        </div>
+<div class="container">
 
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo-wrap">🛡️</div>
+        <h1>Sentinela Cidadão</h1>
+        <p class="frase-cidade">💙 São Fidélis Protegida 🤍</p>
+    </div>
+
+    <!-- CARD IA -->
+    <div class="card" style="margin-bottom: 16px;">
         <div class="chat-ia">
-            <div class="mensagem-ia">
-                <span class="robo">🤖</span>
-                <div class="texto-ia">
-                    <strong>Olá, cidadão fidélense!</strong><br>
-                    Sistema verificado e aprovado.<br>
-                    Análise baseada em padrões conhecidos de golpes.<br>
-                    Vamos juntos proteger nossa cidade! 🚔💙
-                </div>
+            <span class="robo">🤖</span>
+            <div class="texto-ia">
+                <strong>Olá, cidadão fidélense!</strong><br>
+                Sistema verificado e aprovado.<br>
+                Análise baseada em padrões conhecidos de golpes.<br>
+                Vamos juntos proteger nossa cidade! 🚔💙
+                <br>
+                <span class="badge-ativo">SISTEMA ATIVO</span>
             </div>
         </div>
+    </div>
 
-        <div class="abas">
-            <div class="aba ativa" onclick="mudarAba('verificar')">🔍 Verificar</div>
-            <div class="aba" onclick="mudarAba('denunciar')">📢 Denunciar</div>
-        </div>
+    <!-- ABAS -->
+    <div class="abas">
+        <div class="aba ativa" id="aba-verificar" onclick="mudarAba('verificar')">🔍 Verificar</div>
+        <div class="aba" id="aba-denunciar" onclick="mudarAba('denunciar')">📢 Denunciar</div>
+    </div>
 
-        <!-- VERIFICAR -->
+    <!-- CARD CONTEÚDO -->
+    <div class="card">
+
+        <!-- ABA VERIFICAR -->
         <div id="verificar" class="conteudo-aba ativa">
             <div class="grupo-input">
                 <label>Digite o site ou Chave Pix:</label>
                 <input type="text" id="entradaUsuario" placeholder="Ex: https://site.com.br ou 123.456.789-09">
             </div>
-            <button onclick="verificarSeguranca()">VERIFICAR AGORA</button>
+            <button class="btn-principal" onclick="verificarSeguranca()">🔍 VERIFICAR AGORA</button>
             <div id="resultado"></div>
         </div>
 
-        <!-- DENUNCIAR -->
+        <!-- ABA DENUNCIAR -->
         <div id="denunciar" class="conteudo-aba">
-
             <div class="aviso-denuncia">
                 ⚠️ <strong>Como funciona a denúncia?</strong><br>
                 Sua denúncia será salva e analisada pela nossa equipe.<br>
                 Ela só entra na lista de bloqueio <strong>após aprovação</strong>.<br>
                 Isso evita que sites legítimos sejam bloqueados por engano.
             </div>
-
             <div class="grupo-input">
                 <label>Tipo de problema:</label>
                 <select id="tipoDenuncia">
@@ -62,32 +449,179 @@
                     <option value="pix">Pix Irregular / Extorsão</option>
                 </select>
             </div>
-
             <div class="grupo-input">
                 <label>Digite o endereço ou a chave:</label>
                 <input type="text" id="valorDenuncia" placeholder="Cole aqui o link do site ou a chave Pix">
             </div>
-
             <div class="grupo-input">
                 <label>🤖 Conte para a IA o que aconteceu:</label>
                 <textarea id="descricao" rows="3" placeholder="Ex: Recebi um Pix falso dizendo ser da prefeitura..."></textarea>
             </div>
-
-            <button onclick="cadastrarDenuncia()">ENVIAR DENÚNCIA SEGURA</button>
+            <button class="btn-principal" onclick="cadastrarDenuncia()">📢 ENVIAR DENÚNCIA SEGURA</button>
             <div id="resultadoDenuncia"></div>
         </div>
 
-        <div class="rodape">
-            Protegendo os cidadãos de São Fidélis | Moderação Aprovada | Dados Seguros 💙
-        </div>
     </div>
 
-    <!-- FIREBASE (fica no HTML mesmo) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <!-- RODAPÉ -->
+    <div class="rodape" id="rodape">
+        Protegendo os cidadãos de São Fidélis &nbsp;|&nbsp; Moderação Aprovada &nbsp;|&nbsp; Dados Seguros 💙
+    </div>
 
-    <!-- JS EXTERNO -->
-    <script src="js/script.js"></script>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+    // ── FIREBASE ──
+    const firebaseConfig = {
+        apiKey: "SUA_API_KEY_AQUI",
+        authDomain: "sentinela-cidad.firebaseapp.com",
+        projectId: "sentinela-cidad",
+        storageBucket: "sentinela-cidad.appspot.com",
+        messagingSenderId: "645213005112",
+        appId: "1:645213005112:web:dae57f5ebd6c9cfa39cdcd",
+        databaseURL: "https://sentinela-cidad-default-rtdb.firebaseio.com"
+    };
+
+    let bancoDeDados = null;
+
+    try {
+        firebase.initializeApp(firebaseConfig);
+        bancoDeDados = firebase.database();
+        carregarContador();
+    } catch (e) {
+        console.warn("Firebase não inicializado:", e.message);
+    }
+
+    // ── TROCA DE ABAS ──
+    function mudarAba(nome) {
+        document.querySelectorAll('.conteudo-aba').forEach(el => el.classList.remove('ativa'));
+        document.querySelectorAll('.aba').forEach(el => el.classList.remove('ativa'));
+        document.getElementById(nome).classList.add('ativa');
+        document.getElementById('aba-' + nome).classList.add('ativa');
+    }
+
+    // ── LIMPAR TEXTO ──
+    function limparTexto(texto) {
+        return texto.toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    // ── LISTA DE GOLPES ──
+    const listaOficial = [
+        { chave: "pixmilhao",    motivo: "Golpe do Pix do Milhão" },
+        { chave: "ganhedinheiro", motivo: "Golpe de Renda Fácil" },
+        { chave: "voceganhou",   motivo: "Golpe de Prêmio Falso" },
+        { chave: "bitcoin",      motivo: "Possível golpe de criptomoeda" },
+        { chave: "criptoinvest", motivo: "Fraude de investimento em cripto" },
+        { chave: "prefeitura",   motivo: "Possível impersonação de órgão público" },
+        { chave: "boletofalso",  motivo: "Golpe de boleto falso" },
+        { chave: "atualizecadastro", motivo: "Phishing de atualização de dados" }
+    ];
+
+    // ── VERIFICAÇÃO ──
+    function verificarSeguranca() {
+        const entrada = document.getElementById('entradaUsuario').value.trim();
+        const resultado = document.getElementById('resultado');
+
+        if (!entrada) {
+            resultado.style.display = 'block';
+            resultado.className = 'alerta';
+            resultado.innerHTML = '⚠️ Digite um site ou chave Pix para verificar.';
+            return;
+        }
+
+        const texto = limparTexto(entrada);
+        let risco = 0;
+        let motivo = "";
+
+        listaOficial.forEach(item => {
+            if (texto.includes(item.chave)) {
+                risco++;
+                motivo = item.motivo;
+            }
+        });
+
+        resultado.style.display = 'block';
+
+        if (risco >= 2) {
+            resultado.className = 'perigo';
+            resultado.innerHTML = '⛔ ALTO RISCO! NÃO CLIQUE NEM RESPONDA!';
+        } else if (risco === 1) {
+            resultado.className = 'alerta';
+            resultado.innerHTML = '⚠️ POSSÍVEL GOLPE: ' + motivo;
+        } else {
+            resultado.className = 'seguro';
+            resultado.innerHTML = '✅ Nenhum risco identificado nos padrões conhecidos.';
+        }
+    }
+
+    // ── TECLA ENTER NO INPUT ──
+    document.getElementById('entradaUsuario').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') verificarSeguranca();
+    });
+
+    // ── DENÚNCIA ──
+    function cadastrarDenuncia() {
+        const valor = document.getElementById('valorDenuncia').value.trim();
+        const tipo  = document.getElementById('tipoDenuncia').value;
+        const desc  = document.getElementById('descricao').value.trim();
+        const resDiv = document.getElementById('resultadoDenuncia');
+
+        if (!valor) {
+            resDiv.style.display = 'block';
+            resDiv.className = 'alerta';
+            resDiv.innerHTML = '⚠️ Preencha o endereço ou chave antes de enviar.';
+            return;
+        }
+
+        const denuncia = {
+            tipo: tipo,
+            valor: valor,
+            descricao: desc || "(sem descrição)",
+            data: new Date().toLocaleString('pt-BR')
+        };
+
+        if (bancoDeDados) {
+            bancoDeDados.ref('denuncias').push(denuncia)
+                .then(() => {
+                    resDiv.style.display = 'block';
+                    resDiv.className = 'sucesso';
+                    resDiv.innerHTML = '✅ Denúncia enviada com sucesso! Obrigado por proteger São Fidélis.';
+                    document.getElementById('valorDenuncia').value = '';
+                    document.getElementById('descricao').value = '';
+                })
+                .catch(err => {
+                    resDiv.style.display = 'block';
+                    resDiv.className = 'alerta';
+                    resDiv.innerHTML = '⚠️ Erro ao enviar. Verifique a configuração do Firebase.';
+                    console.error(err);
+                });
+        } else {
+            // Modo offline: salva no localStorage como fallback
+            const salvas = JSON.parse(localStorage.getItem('denuncias') || '[]');
+            salvas.push(denuncia);
+            localStorage.setItem('denuncias', JSON.stringify(salvas));
+            resDiv.style.display = 'block';
+            resDiv.className = 'sucesso';
+            resDiv.innerHTML = '✅ Denúncia salva localmente! (Firebase não conectado)';
+        }
+    }
+
+    // ── CONTADOR ──
+    function carregarContador() {
+        if (!bancoDeDados) return;
+        bancoDeDados.ref('denuncias').once('value', snapshot => {
+            const total = snapshot.numChildren();
+            if (total > 0) {
+                document.getElementById('rodape').innerHTML +=
+                    `<br>📊 <strong>${total}</strong> denúncia${total !== 1 ? 's' : ''} registrada${total !== 1 ? 's' : ''}`;
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
