@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentinela Cidadão - São Fidélis</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#00529B">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
         }
 
         body {
@@ -24,12 +22,11 @@
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             border-radius: 20px;
             padding: 30px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .header {
@@ -37,47 +34,13 @@
             margin-bottom: 25px;
         }
 
-        .logo {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-
-        h1 {
-            font-size: 1.8em;
-            margin-bottom: 5px;
-        }
-
+        .logo { font-size: 50px; margin-bottom: 10px; }
+        h1 { font-size: 1.8em; margin-bottom: 5px; }
         .frase-cidade {
             font-size: 1.1em;
             color: #FFD700;
             font-weight: bold;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-
-        /* ESTILO DO CHAT DA IA */
-        .chat-ia {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-left: 5px solid #4CAF50;
-        }
-
-        .mensagem-ia {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .robo {
-            font-size: 30px;
-        }
-
-        .texto-ia {
-            background: rgba(255,255,255,0.1);
-            padding: 10px 15px;
-            border-radius: 15px;
-            line-height: 1.5;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
         }
 
         /* ABAS */
@@ -94,8 +57,8 @@
             padding: 12px;
             text-align: center;
             cursor: pointer;
-            transition: 0.3s;
             font-weight: bold;
+            transition: 0.3s;
         }
 
         .aba.ativa {
@@ -109,12 +72,6 @@
 
         .conteudo-aba.ativa {
             display: block;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         /* FORMULÁRIOS */
@@ -134,7 +91,7 @@
             border: none;
             border-radius: 10px;
             font-size: 16px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255,255,255,0.9);
             color: #333;
         }
 
@@ -149,7 +106,6 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
         }
 
         button:hover {
@@ -162,7 +118,6 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            font-size: 16px;
             font-weight: bold;
             display: none;
         }
@@ -186,20 +141,6 @@
             <div class="logo">🛡️</div>
             <h1>Sentinela Cidadão</h1>
             <p class="frase-cidade">💙 A CIDADE DE SÃO FIDÉLIS ESTÁ PROTEGIDA! 🤍</p>
-        </div>
-
-        <!-- 💬 CHAT DA INTELIGÊNCIA ARTIFICIAL -->
-        <div class="chat-ia">
-            <div class="mensagem-ia">
-                <span class="robo">🤖</span>
-                <div class="texto-ia">
-                    <strong>Olá, cidadão fidélense!</strong><br>
-                    Eu sou a assistente virtual do Sentinela. 
-                    Se você sofreu um golpe, recebeu Pix errado ou encontrou um site suspeito, 
-                    <strong>use a aba "Denunciar"</strong> para ajudar a proteger nossa cidade! 
-                    Vamos juntos contra a fraude! 🚔💙
-                </div>
-            </div>
         </div>
 
         <!-- MENU DE ABAS -->
@@ -236,7 +177,7 @@
             </div>
 
             <div class="grupo-input">
-                <label>Conte o que aconteceu (para a IA):</label>
+                <label>Conte o que aconteceu:</label>
                 <textarea id="descricao" rows="3" placeholder="Ex: Recebi um Pix falso dizendo ser da prefeitura..."></textarea>
             </div>
 
@@ -246,19 +187,15 @@
         </div>
 
         <div class="rodape">
-            Protegendo os cidadãos de São Fidélis e região | Todos unidos contra o crime 💙
+            Protegendo os cidadãos de São Fidélis | Todos unidos contra o crime 💙
         </div>
     </div>
 
     <script>
-        // 👇 COLOQUE SUA CHAVE DA API AQUI
-        const SUA_CHAVE_API = "AIzaSyDxo67LsI8xbYqUKVPr8a-3wE6TxNmQG18"; 
-
-        // 🚫 LISTA NEGRA DA CIDADE
+        // LISTA NEGRA DA CIDADE
         let listaPixGolpe = [
             "123.456.789-09",
-            "987.654.321-00",
-            "golpe@email.com"
+            "987.654.321-00"
         ];
 
         let listaSitesGolpe = [
@@ -266,132 +203,76 @@
             "fraude.net"
         ];
 
-        // Função das Abas
-        function mudarAba(nomeAba) {
-            document.querySelectorAll('.conteudo-aba').forEach(el => el.classList.remove('ativa'));
-            document.querySelectorAll('.aba').forEach(el => el.classList.remove('ativa'));
-            document.getElementById(nomeAba).classList.add('ativa');
-            event.target.classList.add('ativa');
-        }
-
-        function extrairLink(texto) {
-            const regex = /https?:\/\/[^\s]+/g;
-            const encontrados = texto.match(regex);
-            return encontrados ? encontrados[0] : null;
-        }
-
-        function verificarPix(texto) {
-            const textoLimpo = texto.trim().toLowerCase();
-            return listaPixGolpe.some(item => item.toLowerCase() === textoLimpo);
-        }
-
-        function verificarSiteLocal(texto) {
-            const textoLimpo = texto.trim().toLowerCase();
-            return listaSitesGolpe.some(item => textoLimpo.includes(item.toLowerCase()));
-        }
-
-        // VERIFICAÇÃO PRINCIPAL
-        async function verificarSeguranca() {
-            const entrada = document.getElementById('entradaUsuario').value;
-            const resultadoDiv = document.getElementById('resultado');
+        // FUNÇÃO DAS ABAS - AGORA FUNCIONA CERTO!
+        function mudarAba(nome) {
+            // Esconde tudo
+            document.getElementById('verificar').style.display = 'none';
+            document.getElementById('denunciar').style.display = 'none';
             
-            resultadoDiv.style.display = "block";
-            resultadoDiv.innerHTML = "🔍 Analisando dados...";
-            resultadoDiv.className = "";
-
-            const urlParaChecar = extrairLink(entrada);
-
-            if (urlParaChecar) {
-                if(verificarSiteLocal(urlParaChecar)) {
-                    resultadoDiv.innerHTML = `⛔ ALERTA! ⛔<br><br>Esse site já foi denunciado aqui em <strong>SÃO FIDÉLIS</strong>!<br>Não confie!`;
-                    resultadoDiv.className = "perigo";
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${SUA_CHAVE_API}`, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            client: { clientId: "sentinela-sf", clientVersion: "2.0" },
-                            threatInfo: {
-                                threatTypes: ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE"],
-                                platformTypes: ["ANY_PLATFORM"],
-                                threatEntryTypes: ["URL"],
-                                threatEntries: [{ url: urlParaChecar }]
-                            }
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (data.matches) {
-                        resultadoDiv.innerHTML = `⛔ PERIGO! ⛔<br><br>Site perigoso detectado!<br>Proteja seus dados e avise os amigos!`;
-                        resultadoDiv.className = "perigo";
-                    } else {
-                        resultadoDiv.innerHTML = `✅ Tudo certo por enquanto.<br><br>Mas sempre confira o nome da empresa antes de pagar!`;
-                        resultadoDiv.className = "seguro";
-                    }
-                } catch (erro) {
-                    resultadoDiv.innerHTML = "⚠️ Sistema online. Verifique sua conexão.";
-                    resultadoDiv.className = "alerta";
-                }
-
+            // Remove classe ativa
+            document.querySelectorAll('.aba')[0].classList.remove('ativa');
+            document.querySelectorAll('.aba')[1].classList.remove('ativa');
+            
+            // Mostra a aba escolhida
+            document.getElementById(nome).style.display = 'block';
+            
+            // Marca como ativa
+            if(nome == 'verificar') {
+                document.querySelectorAll('.aba')[0].classList.add('ativa');
             } else {
-                if(verificarPix(entrada)){
-                    resultadoDiv.innerHTML = `⚠️ ATENÇÃO, SÃO FIDÉLIS! ⚠️<br><br>ESSA CHAVE PIX ESTÁ MARCADA COMO FRAUDE!<br>NÃO TRANSFIRA!`;
-                    resultadoDiv.className = "perigo";
-                } else {
-                    resultadoDiv.innerHTML = `ℹ️ Dica de Ouro:<br>Confira sempre se o <strong>NOME</strong> da conta é quem você conhece!<br>Se for diferente, cancele!`;
-                    resultadoDiv.className = "alerta";
-                }
+                document.querySelectorAll('.aba')[1].classList.add('ativa');
             }
         }
 
-        // FUNÇÃO DE DENÚNCIA COM "IA"
+        // FUNÇÃO DE VERIFICAÇÃO
+        function verificarSeguranca() {
+            const entrada = document.getElementById('entradaUsuario').value.trim().toLowerCase();
+            const resultado = document.getElementById('resultado');
+
+            resultado.style.display = "block";
+
+            // Verifica se está na lista negra
+            const ehPixGolpe = listaPixGolpe.some(item => entrada.includes(item.toLowerCase()));
+            const ehSiteGolpe = listaSitesGolpe.some(item => entrada.includes(item.toLowerCase()));
+
+            if(ehPixGolpe || ehSiteGolpe) {
+                resultado.innerHTML = "⚠️ ATENÇÃO! ⚠️<br><br>ESSE DADO JÁ FOI DENUNCIADO EM SÃO FIDÉLIS!<br>NÃO CONFIE!";
+                resultado.className = "perigo";
+            } else {
+                resultado.innerHTML = "ℹ️ DICA:<br>Confira sempre o NOME da conta antes de pagar!<br>Se for diferente, cancele!";
+                resultado.className = "alerta";
+            }
+        }
+
+        // FUNÇÃO DE DENÚNCIA
         function cadastrarDenuncia() {
             const tipo = document.getElementById('tipoDenuncia').value;
             const valor = document.getElementById('valorDenuncia').value.trim();
             const descricao = document.getElementById('descricao').value;
-            const resultadoDiv = document.getElementById('resultadoDenuncia');
+            const resultado = document.getElementById('resultadoDenuncia');
 
-            if(valor === "") {
-                resultadoDiv.innerHTML = "⚠️ Preencha a chave ou o site!";
-                resultadoDiv.className = "alerta";
-                resultadoDiv.style.display = "block";
+            if(valor == "") {
+                resultado.innerHTML = "⚠️ Preencha o site ou a chave!";
+                resultado.className = "alerta";
+                resultado.style.display = "block";
                 return;
             }
 
             // Adiciona na lista
-            if(tipo === "pix") {
-                if(!verificarPix(valor)) listaPixGolpe.push(valor);
+            if(tipo == "pix") {
+                listaPixGolpe.push(valor);
             } else {
-                if(!verificarSiteLocal(valor)) listaSitesGolpe.push(valor);
+                listaSitesGolpe.push(valor);
             }
 
-            // Resposta da IA
-            let respostaIa = "";
-            if(descricao.toLowerCase().includes("pix") || descricao.toLowerCase().includes("recebi")){
-                respostaIa = "Entendi! Você relatou um problema com Pix. Isso é muito importante para evitar que mais pessoas caiam no golpe.";
-            } else if(descricao.toLowerCase().includes("site") || descricao.toLowerCase().includes("link")){
-                respostaIa = "Analisei a descrição. Site falso é crime! Obrigado por alertar a todos.";
-            } else {
-                respostaIa = "Obrigado pela colaboração! Sua denúncia ajuda a manter nossa cidade segura.";
-            }
+            // Resposta
+            resultado.innerHTML = "✅ DENÚNCIA REGISTRADA! ✅<br><br>Obrigado por proteger nossa cidade! 💙";
+            resultado.className = "sucesso";
+            resultado.style.display = "block";
 
-            resultadoDiv.innerHTML = `✅ DENÚNCIA REGISTRADA! ✅<br><br>${respostaIa}<br><br>Agora todos verão o alerta! 💙`;
-            resultadoDiv.className = "sucesso";
-            resultadoDiv.style.display = "block";
-
-            // Limpar
+            // Limpa
             document.getElementById('valorDenuncia').value = "";
             document.getElementById('descricao').value = "";
-        }
-
-        // Service Worker para App
-        if('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js');
-            });
         }
     </script>
 </body>
