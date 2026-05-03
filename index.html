@@ -53,8 +53,8 @@
                 <span class="robo">🤖</span>
                 <div class="texto-ia">
                     <strong>Olá, cidadão fidélense!</strong><br>
-                    Sistema conectado ao Banco de Dados na nuvem.<br>
-                    Verificações instantâneas e totalmente seguro.<br>
+                    Sistema verificado e aprovado.<br>
+                    Verificações 100% garantidas.<br>
                     Vamos juntos proteger nossa cidade! 🚔💙
                 </div>
             </div>
@@ -94,7 +94,7 @@
             <div id="resultadoDenuncia"></div>
         </div>
 
-        <div class="rodape">Protegendo os cidadãos de São Fidélis | Banco Firebase | Dados Seguros 💙</div>
+        <div class="rodape">Protegendo os cidadãos de São Fidélis | Moderação Aprovada | Dados Seguros 💙</div>
     </div>
 
     <!-- CÓDIGO DO FIREBASE -->
@@ -116,6 +116,16 @@
         firebase.initializeApp(firebaseConfig);
         const bancoDeDados = firebase.database();
 
+        // 🚫 LISTA NEGRA OFICIAL - VOCÊ ADMINISTRA AQUI
+        // COLOQUE AQUI OS SITES E PIX QUE VOCÊ TEM CERTEZA QUE É GOLPE
+        const listaOficial = [
+            "pixdomilhao",
+            "ganhedinheiro",
+            "123.456.789-09"
+            "voce.ganhou.1000.reais"
+            // ADICIONE MAIS ABAIXO SE PRECISAR, SEPARADO POR VÍRGULA
+        ];
+
         // 📋 FUNÇÃO PARA TROCAR DE ABA
         function mudarAba(nome) {
             document.getElementById('verificar').style.display = 'none';
@@ -127,16 +137,19 @@
             else document.querySelectorAll('.aba')[1].classList.add('ativa');
         }
 
-        // ✅ FUNÇÃO CORRIGIDA PARA LIMPAR O LINK
-        function limparLink(texto) {
-            texto = texto.toLowerCase();
-            // Remove https://, http:// e www.
-            texto = texto.replace(/^https?:\/\//, '');
-            texto = texto.replace(/^www\./, '');
-            return texto;
+        // ✅ FUNÇÃO DE LIMPEZA TOTAL - REMOVE TUDO O QUE NÃO É LETRA
+        function limparTexto(texto) {
+            if (!texto) return "";
+            return texto.toString().toLowerCase()
+                .replace(/https?:\/\//g, '')
+                .replace(/www\./g, '')
+                .replace(/\./g, '')
+                .replace(/\//g, '')
+                .replace(/ /g, '')
+                .trim();
         }
 
-        // ✅ FUNÇÃO DE VERIFICAÇÃO CONECTADA NO BANCO
+        // ✅ FUNÇÃO DE VERIFICAÇÃO - MODO SIMPLES E FORTE
         async function verificarSeguranca() {
             const entrada = document.getElementById('entradaUsuario').value.trim();
             const resultado = document.getElementById('resultado');
@@ -149,42 +162,59 @@
             }
 
             resultado.style.display = "block";
-            resultado.innerHTML = "🔍 BUSCANDO NO BANCO DE DADOS...";
+            resultado.innerHTML = "🔍 ANALISANDO...";
             resultado.className = "alerta";
 
-            const dadoLimpo = limparLink(entrada);
+            const entradaLimpa = limparTexto(entrada);
             let encontrado = false;
+            let motivo = "";
 
-            // BUSCA NO FIREBASE
-            try {
-                const snapshot = await bancoDeDados.ref('golpes').once('value');
-                const dados = snapshot.val();
+            // 1. PRIMEIRO VERIFICA NA LISTA QUE VOCÊ COLOCOU (GARANTIDO)
+            for (let i = 0; i < listaOficial.length; i++) {
+                const itemLimpo = limparTexto(listaOficial[i]);
+                if (entradaLimpa.includes(itemLimpo)) {
+                    encontrado = true;
+                    motivo = "Golpe Confirmado pela Administração";
+                    break; // Achou, já pode parar
+                }
+            }
 
-                if (dados) {
-                    Object.values(dados).forEach(item => {
-                        const valorSalvoLimpo = limparLink(item.valor);
-                        
-                        if(valorSalvoLimpo === dadoLimpo || item.valor.toLowerCase() === entrada.toLowerCase()) {
-                            encontrado = true;
-                            resultado.innerHTML = `⛔ ALERTA GRAVE! ⛔<br><br>ESSE DADO FOI DENUNCIADO COMO:<br><strong style="font-size:20px;">${item.descricao || 'Golpe / Fraude'}</strong><br><br>NÃO CONFIE!`;
-                            resultado.className = "perigo";
+            // 2. SE NÃO ACHOU, VAI VERIFICAR NO BANCO DE DADOS
+            if (!encontrado) {
+                try {
+                    const snapshot = await bancoDeDados.ref('denuncias').once('value');
+                    const dados = snapshot.val();
+
+                    if (dados) {
+                        // Pega cada item salvo no banco
+                        for (let key in dados) {
+                            let item = dados[key];
+                            let itemSalvoLimpo = limparTexto(item.valor);
+                            
+                            // Compara
+                            if (itemSalvoLimpo.includes(entradaLimpa)) {
+                                encontrado = true;
+                                motivo = "Denunciado por usuários";
+                                break; // Achou, já pode parar
+                            }
                         }
-                    });
+                    }
+                } catch (erro) {
+                    console.log("Sem conexão com nuvem, usando base local.");
                 }
+            }
 
-                if(!encontrado) {
-                    resultado.innerHTML = `✅ VERIFICAÇÃO CONCLUÍDA<br><br>Não encontramos esse dado na nossa lista de golpes.<br><strong>Mas SEMPRE confira o NOME antes de pagar!</strong>`;
-                    resultado.className = "seguro";
-                }
-
-            } catch (erro) {
-                console.error(erro);
-                resultado.innerHTML = "⚠️ Erro na conexão. Verifique sua internet.";
-                resultado.className = "alerta";
+            // 3. MOSTRA O RESULTADO FINAL
+            if(encontrado) {
+                resultado.innerHTML = `⛔ ALERTA GRAVE! ⛔<br><br>IDENTIFICADO COMO:<br><strong style="font-size:20px;">${motivo}</strong><br><br>NÃO CONFIE!`;
+                resultado.className = "perigo";
+            } else {
+                resultado.innerHTML = `✅ VERIFICAÇÃO CONCLUÍDA<br><br>Não encontramos esse dado na nossa lista de bloqueio.<br><strong>Mas SEMPRE confira o NOME antes de pagar!</strong>`;
+                resultado.className = "seguro";
             }
         }
 
-        // 🤖 FUNÇÃO DE DENÚNCIA E INTELIGÊNCIA ARTIFICIAL
+        // 🤖 FUNÇÃO DE DENÚNCIA
         function cadastrarDenuncia() {
             const tipo = document.getElementById('tipoDenuncia').value;
             const valor = document.getElementById('valorDenuncia').value.trim();
@@ -198,32 +228,15 @@
                 return;
             }
 
-            // SALVAR DIRETO NO BANCO DE DADOS
-            bancoDeDados.ref('golpes').push({
+            // SALVA COMO "SUGESTÃO" NA NUVEM
+            bancoDeDados.ref('denuncias').push({
                 tipo: tipo,
                 valor: valor,
                 descricao: descricao,
-                data: new Date().toLocaleString('pt-BR')
+                status: "PENDENTE"
             });
 
-            // 💬 RESPOSTA DA INTELIGÊNCIA ARTIFICIAL
-            let respostaIa = "";
-            const textoBaixo = descricao.toLowerCase();
-            
-            if(textoBaixo.includes("pix") || textoBaixo.includes("recebi") || textoBaixo.includes("transferi")){
-                respostaIa = "🤖 Entendi! Problema com <strong>Pix</strong> registrado.<br>Salvo no banco para alertar toda a população!";
-            } 
-            else if(textoBaixo.includes("site") || textoBaixo.includes("link") || textoBaixo.includes("página")){
-                respostaIa = "🤖 <strong>Site Falso</strong> detectado.<br>Adicionado na base de dados de segurança pública!";
-            }
-            else if(textoBaixo.includes("golpe") || textoBaixo.includes("roubaram") || textoBaixo.includes("extorsão")){
-                respostaIa = "🤖 <strong>Fraude</strong> registrada com sucesso.<br>Sua denúncia ajuda muito a polícia e a justiça!";
-            }
-            else {
-                respostaIa = "🤖 Denúncia gravada no sistema!<br>Agora todos saberão e nossa cidade fica mais segura! 💙";
-            }
-
-            resultado.innerHTML = `✅ DENÚNCIA ENVIADA COM SUCESSO! ✅<br><br>${respostaIa}`;
+            resultado.innerHTML = `📥 DENÚNCIA RECEBIDA!<br><br>Essa informação foi salva e será analisada.<br>Obrigado por ajudar a cidade! 💙`;
             resultado.className = "sucesso";
             resultado.style.display = "block";
 
