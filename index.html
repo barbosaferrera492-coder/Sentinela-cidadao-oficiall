@@ -127,21 +127,32 @@
             else document.querySelectorAll('.aba')[1].classList.add('ativa');
         }
 
-        function extrairLink(texto) {
-            const regex = /https?:\/\/[^\s]+/g;
-            const encontrados = texto.match(regex);
-            return encontrados ? encontrados[0] : null;
+        // ✅ FUNÇÃO CORRIGIDA PARA LIMPAR O LINK
+        function limparLink(texto) {
+            texto = texto.toLowerCase();
+            // Remove https://, http:// e www.
+            texto = texto.replace(/^https?:\/\//, '');
+            texto = texto.replace(/^www\./, '');
+            return texto;
         }
 
         // ✅ FUNÇÃO DE VERIFICAÇÃO CONECTADA NO BANCO
         async function verificarSeguranca() {
-            const entrada = document.getElementById('entradaUsuario').value.trim().toLowerCase();
+            const entrada = document.getElementById('entradaUsuario').value.trim();
             const resultado = document.getElementById('resultado');
+            
+            if(!entrada) {
+                resultado.innerHTML = "⚠️ Digite algo para verificar!";
+                resultado.className = "alerta";
+                resultado.style.display = "block";
+                return;
+            }
+
             resultado.style.display = "block";
             resultado.innerHTML = "🔍 BUSCANDO NO BANCO DE DADOS...";
             resultado.className = "alerta";
 
-            const dadoParaVerificar = extrairLink(entrada) || entrada;
+            const dadoLimpo = limparLink(entrada);
             let encontrado = false;
 
             // BUSCA NO FIREBASE
@@ -151,7 +162,9 @@
 
                 if (dados) {
                     Object.values(dados).forEach(item => {
-                        if(item.valor && item.valor.toLowerCase() === dadoParaVerificar) {
+                        const valorSalvoLimpo = limparLink(item.valor);
+                        
+                        if(valorSalvoLimpo === dadoLimpo || item.valor.toLowerCase() === entrada.toLowerCase()) {
                             encontrado = true;
                             resultado.innerHTML = `⛔ ALERTA GRAVE! ⛔<br><br>ESSE DADO FOI DENUNCIADO COMO:<br><strong style="font-size:20px;">${item.descricao || 'Golpe / Fraude'}</strong><br><br>NÃO CONFIE!`;
                             resultado.className = "perigo";
@@ -165,6 +178,7 @@
                 }
 
             } catch (erro) {
+                console.error(erro);
                 resultado.innerHTML = "⚠️ Erro na conexão. Verifique sua internet.";
                 resultado.className = "alerta";
             }
