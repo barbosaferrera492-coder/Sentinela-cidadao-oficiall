@@ -12,8 +12,7 @@
         .logo { font-size: 50px; margin-bottom: 10px; }
         h1 { font-size: 1.8em; margin-bottom: 5px; }
         .frase-cidade { font-size: 1.1em; color: #FFD700; font-weight: bold; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        
-        /* ESTILO DO CHAT DA IA */
+
         .chat-ia { background: rgba(0,0,0,0.2); border-radius: 15px; padding: 15px; margin-bottom: 20px; border-left: 5px solid #4CAF50; }
         .mensagem-ia { display: flex; align-items: flex-start; gap: 10px; }
         .robo { font-size: 30px; }
@@ -30,13 +29,24 @@
         input, select, textarea { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; background: rgba(255,255,255,0.9); color: #333; }
         button { width: 100%; padding: 15px; background: #FFD700; color: #00264d; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         button:hover { background: #FFC107; transform: scale(1.02); }
-        
+
         #resultado, #resultadoDenuncia { margin-top: 20px; padding: 20px; border-radius: 10px; text-align: center; font-weight: bold; display: none; }
         .seguro { background: #d4edda; color: #155724; }
         .perigo { background: #dc3545; color: white; }
         .alerta { background: #fff3cd; color: #856404; }
         .sucesso { background: #28a745; color: white; }
         .rodape { text-align: center; margin-top: 30px; font-size: 12px; opacity: 0.7; }
+
+        .aviso-denuncia {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #FFD700;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #FFD700;
+        }
     </style>
 </head>
 <body>
@@ -47,7 +57,6 @@
             <p class="frase-cidade">💙 A CIDADE DE SÃO FIDÉLIS ESTÁ PROTEGIDA! 🤍</p>
         </div>
 
-        <!-- 💬 CHAT DA INTELIGÊNCIA ARTIFICIAL -->
         <div class="chat-ia">
             <div class="mensagem-ia">
                 <span class="robo">🤖</span>
@@ -75,6 +84,15 @@
         </div>
 
         <div id="denunciar" class="conteudo-aba">
+
+            <!-- ⚠️ AVISO IMPORTANTE PARA O USUÁRIO -->
+            <div class="aviso-denuncia">
+                ⚠️ <strong>Como funciona a denúncia?</strong><br>
+                Sua denúncia será salva e analisada pela nossa equipe.<br>
+                Ela só entra na lista de bloqueio <strong>após aprovação</strong>.<br>
+                Isso evita que sites legítimos sejam bloqueados por engano.
+            </div>
+
             <div class="grupo-input">
                 <label>Tipo de problema:</label>
                 <select id="tipoDenuncia">
@@ -97,12 +115,12 @@
         <div class="rodape">Protegendo os cidadãos de São Fidélis | Moderação Aprovada | Dados Seguros 💙</div>
     </div>
 
-    <!-- CÓDIGO DO FIREBASE -->
+    <!-- FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // 🔧 CONFIGURAÇÃO DO SEU PROJETO FIREBASE
+        // 🔧 CONFIGURAÇÃO DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDTzKuw6PFNswkCO8jZYfEf9f_-3zuDKSM",
             authDomain: "sentinela-cidad.firebaseapp.com",
@@ -112,46 +130,118 @@
             appId: "1:645213005112:web:dae57f5ebd6c9cfa39cdcd"
         };
 
-        // INICIALIZAR O SISTEMA
         firebase.initializeApp(firebaseConfig);
         const bancoDeDados = firebase.database();
 
-        // 🚫 LISTA NEGRA OFICIAL - VOCÊ ADMINISTRA AQUI
+        // ============================================================
+        // 🚫 LISTA NEGRA OFICIAL
+        // Só você pode adicionar itens aqui.
+        // As denúncias do público ficam PENDENTES e NÃO entram aqui
+        // automaticamente — você precisa aprovar e adicionar na mão.
+        //
+        // COMO ADICIONAR UM NOVO ITEM:
+        // { chave: "palavrasemespaco", motivo: "Descrição do golpe" },
+        // ============================================================
         const listaOficial = [
-            "pixdomilhao",
-            "ganhedinheiro",
-            "123.456.789-09"
-        ];
 
-        // 📋 FUNÇÃO PARA TROCAR DE ABA
+            // --- GOLPES DE PIX E DINHEIRO FÁCIL ---
+            { chave: "pixmilhao",          motivo: "Golpe do Pix do Milhão" },
+            { chave: "pixdosmilhao",       motivo: "Golpe do Pix do Milhão" },
+            { chave: "pixdomilhao",        motivo: "Golpe do Pix do Milhão" },
+            { chave: "ganhedinheiro",      motivo: "Golpe de Renda Fácil" },
+            { chave: "ganhodinheiro",      motivo: "Golpe de Renda Fácil" },
+            { chave: "ganhadinheiro",      motivo: "Golpe de Renda Fácil" },
+            { chave: "dinheirofacil",      motivo: "Golpe de Renda Fácil" },
+            { chave: "ricoemminutos",      motivo: "Golpe de Renda Fácil" },
+            { chave: "ficaricorapido",     motivo: "Golpe de Renda Fácil" },
+            { chave: "rendaextra",         motivo: "Possível Golpe de Renda Extra" },
+            { chave: "trabalheemcasa",     motivo: "Possível Golpe de Trabalho em Casa" },
+            { chave: "investimentogarantido", motivo: "Golpe de Investimento Falso" },
+            { chave: "lucrogarantido",     motivo: "Golpe de Investimento Falso" },
+            { chave: "retornogarantido",   motivo: "Golpe de Investimento Falso" },
+
+            // --- GOLPES DE PRÊMIOS E SORTEIOS ---
+            { chave: "voceganhoupremio",   motivo: "Golpe de Prêmio Falso" },
+            { chave: "parabensvoceganhou", motivo: "Golpe de Prêmio Falso" },
+            { chave: "resgatepremio",      motivo: "Golpe de Prêmio Falso" },
+            { chave: "sorteiooficial",     motivo: "Golpe de Sorteio Falso" },
+            { chave: "claimprize",         motivo: "Golpe de Prêmio Falso (inglês)" },
+            { chave: "youhavewon",         motivo: "Golpe de Prêmio Falso (inglês)" },
+
+            // --- GOLPES BANCÁRIOS E FINANCEIROS ---
+            { chave: "atualizecadastro",   motivo: "Phishing Bancário" },
+            { chave: "atualizacaobancaria",motivo: "Phishing Bancário" },
+            { chave: "bloqueiocontabancaria", motivo: "Phishing Bancário" },
+            { chave: "confirmarsaldo",     motivo: "Phishing Bancário" },
+            { chave: "verificarsaldo",     motivo: "Phishing Bancário" },
+            { chave: "desbloquearpix",     motivo: "Golpe de Pix Falso" },
+            { chave: "liberarpix",         motivo: "Golpe de Pix Falso" },
+            { chave: "pixbloqueado",       motivo: "Golpe de Pix Falso" },
+            { chave: "cadastropix",        motivo: "Possível Golpe de Cadastro Pix" },
+            { chave: "chavepixi",          motivo: "Possível Golpe de Chave Pix" },
+
+            // --- GOLPES DE EMPRÉSTIMO ---
+            { chave: "emprestimosemnegativado", motivo: "Golpe de Empréstimo Falso" },
+            { chave: "emprestimofacil",    motivo: "Golpe de Empréstimo Falso" },
+            { chave: "creditogarantido",   motivo: "Golpe de Crédito Falso" },
+            { chave: "emprestimoonline",   motivo: "Possível Golpe de Empréstimo" },
+
+            // --- GOLPES DO GOVERNO E BENEFÍCIOS ---
+            { chave: "bolsafamiliaextra",  motivo: "Golpe de Benefício Falso" },
+            { chave: "auxiloemergencial",  motivo: "Golpe de Auxílio Falso" },
+            { chave: "beneficiogov",       motivo: "Golpe de Benefício Falso" },
+            { chave: "inssdigital",        motivo: "Possível Phishing do INSS" },
+            { chave: "recadastramento",    motivo: "Possível Golpe de Recadastramento" },
+
+            // --- GOLPES DE SUPORTE TÉCNICO ---
+            { chave: "suportemicrosoft",   motivo: "Golpe de Suporte Técnico Falso" },
+            { chave: "suportewindows",     motivo: "Golpe de Suporte Técnico Falso" },
+            { chave: "virusdetectado",     motivo: "Golpe de Vírus Falso" },
+            { chave: "seucomputadorinfectado", motivo: "Golpe de Vírus Falso" },
+
+            // --- GOLPES DE ROMANCE E RELACIONAMENTO ---
+            { chave: "encontreamor",       motivo: "Possível Golpe de Romance" },
+            { chave: "namoradavirtual",    motivo: "Possível Golpe de Romance" },
+
+            // --- GOLPES DE CRYPTO E PIRÂMIDE ---
+            { chave: "bitcoin",            motivo: "Possível Golpe de Criptomoeda" },
+            { chave: "esquemapagamento",   motivo: "Possível Esquema de Pirâmide" },
+            { chave: "marketingmultinivel", motivo: "Possível Esquema de Pirâmide" },
+            { chave: "indicacaoganho",     motivo: "Possível Esquema de Pirâmide" },
+
+            // --- CHAVES PIX SUSPEITAS ESPECÍFICAS ---
+            { chave: "12345678909",        motivo: "Chave Pix Suspeita Cadastrada" },
+        ];
+        // ============================================================
+        // FIM DA LISTA NEGRA
+        // ============================================================
+
+
+        // 📋 TROCA DE ABAS
         function mudarAba(nome) {
             document.getElementById('verificar').style.display = 'none';
             document.getElementById('denunciar').style.display = 'none';
             document.querySelectorAll('.aba')[0].classList.remove('ativa');
             document.querySelectorAll('.aba')[1].classList.remove('ativa');
             document.getElementById(nome).style.display = 'block';
-            if(nome == 'verificar') document.querySelectorAll('.aba')[0].classList.add('ativa');
+            if (nome == 'verificar') document.querySelectorAll('.aba')[0].classList.add('ativa');
             else document.querySelectorAll('.aba')[1].classList.add('ativa');
         }
 
-        // ✅ FUNÇÃO DE LIMPEZA TOTAL
+        // ✅ LIMPEZA DE TEXTO — Remove tudo exceto letras e números
         function limparTexto(texto) {
             if (!texto) return "";
             return texto.toString().toLowerCase()
-                .replace(/https?:\/\//g, '')
-                .replace(/www\./g, '')
-                .replace(/\./g, '')
-                .replace(/\//g, '')
-                .replace(/ /g, '')
-                .trim();
+                .replace(/https?:\/\//g, '')   // remove http:// ou https://
+                .replace(/[^a-z0-9]/g, '');    // remove tudo que não for letra ou número
         }
 
-        // ✅ FUNÇÃO DE VERIFICAÇÃO REFEITA DO ZERO
+        // ✅ FUNÇÃO DE VERIFICAÇÃO CORRIGIDA
         async function verificarSeguranca() {
             const entrada = document.getElementById('entradaUsuario').value.trim();
             const resultado = document.getElementById('resultado');
-            
-            if(!entrada) {
+
+            if (!entrada) {
                 resultado.innerHTML = "⚠️ Digite algo para verificar!";
                 resultado.className = "alerta";
                 resultado.style.display = "block";
@@ -163,59 +253,70 @@
             resultado.className = "alerta";
 
             const entradaLimpa = limparTexto(entrada);
+
             let encontrado = false;
             let motivo = "";
 
-            console.log("Procurando por: " + entradaLimpa);
-
-            // 1. VERIFICA NA LISTA OFICIAL (MODO FORTE)
+            // VERIFICA NA LISTA NEGRA OFICIAL
             for (let i = 0; i < listaOficial.length; i++) {
-                const palavraChave = limparTexto(listaOficial[i]);
-                
-                console.log("Comparando com: " + palavraChave);
+                const palavraChave = limparTexto(listaOficial[i].chave);
 
-                // SE A FRASE QUE VOCÊ DIGITOU CONTIVER A PALAVRA DA LISTA
                 if (entradaLimpa.includes(palavraChave)) {
                     encontrado = true;
-                    motivo = "Golpe Confirmado";
-                    console.log(">>> ENCONTROU! <<<");
+                    motivo = listaOficial[i].motivo;
                     break;
                 }
             }
 
-            // 2. RESULTADO FINAL
-            if(encontrado) {
-                resultado.innerHTML = `⛔ ALERTA GRAVE! ⛔<br><br>IDENTIFICADO COMO:<br><strong style="font-size:20px;">${motivo}</strong><br><br>NÃO CONFIE!`;
+            // RESULTADO
+            if (encontrado) {
+                resultado.innerHTML = `
+                    ⛔ ALERTA GRAVE! ⛔<br><br>
+                    IDENTIFICADO COMO:<br>
+                    <strong style="font-size:20px;">${motivo}</strong><br><br>
+                    NÃO CONFIE! NÃO PAGUE! NÃO CLIQUE!
+                `;
                 resultado.className = "perigo";
             } else {
-                resultado.innerHTML = `✅ VERIFICAÇÃO CONCLUÍDA<br><br>Não encontramos esse dado na nossa lista de bloqueio.<br><strong>Mas SEMPRE confira o NOME antes de pagar!</strong>`;
+                resultado.innerHTML = `
+                    ✅ VERIFICAÇÃO CONCLUÍDA<br><br>
+                    Não encontramos esse dado na nossa lista de bloqueio.<br>
+                    <strong>Mas SEMPRE confira o NOME antes de pagar!</strong><br><br>
+                    <small>Em caso de dúvida, use a aba 📢 Denunciar.</small>
+                `;
                 resultado.className = "seguro";
             }
         }
 
-        // 🤖 FUNÇÃO DE DENÚNCIA
+        // 🤖 FUNÇÃO DE DENÚNCIA — Salva como PENDENTE, nunca bloqueia automaticamente
         function cadastrarDenuncia() {
             const tipo = document.getElementById('tipoDenuncia').value;
             const valor = document.getElementById('valorDenuncia').value.trim();
             const descricao = document.getElementById('descricao').value;
             const resultado = document.getElementById('resultadoDenuncia');
 
-            if(valor == "") {
+            if (valor == "") {
                 resultado.innerHTML = "⚠️ Preencha o site ou a chave!";
                 resultado.className = "alerta";
                 resultado.style.display = "block";
                 return;
             }
 
-            // SALVA COMO "SUGESTÃO" NA NUVEM
+            // SALVA NO FIREBASE COMO PENDENTE — SÓ VOCÊ PODE APROVAR
             bancoDeDados.ref('denuncias').push({
                 tipo: tipo,
                 valor: valor,
                 descricao: descricao,
-                status: "PENDENTE"
+                status: "PENDENTE",         // ← nunca vira APROVADO automaticamente
+                dataHora: new Date().toLocaleString('pt-BR')
             });
 
-            resultado.innerHTML = `📥 DENÚNCIA RECEBIDA!<br><br>Essa informação foi salva e será analisada.<br>Obrigado por ajudar a cidade! 💙`;
+            resultado.innerHTML = `
+                📥 DENÚNCIA RECEBIDA!<br><br>
+                Sua denúncia foi salva com status <strong>PENDENTE</strong>.<br>
+                Ela só entrará na lista de bloqueio após análise da nossa equipe.<br><br>
+                Obrigado por ajudar a proteger São Fidélis! 💙
+            `;
             resultado.className = "sucesso";
             resultado.style.display = "block";
 
