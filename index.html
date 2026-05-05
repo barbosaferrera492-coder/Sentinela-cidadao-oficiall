@@ -64,20 +64,23 @@
     @keyframes aparecer{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
     .grupo-input{margin-bottom:16px;}
     label{display:block;margin-bottom:8px;font-weight:600;font-size:0.9em;color:rgba(255,255,255,0.75);}
-    input,select,textarea{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--vidro-borda);background:rgba(0,0,0,0.25);color:var(--branco);font-size:15px;}
-    input:focus{outline:none;border-color:var(--dourado);}
+    input,select,textarea{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--vidro-borda);background:rgba(0,0,0,0.25);color:var(--branco);font-size:15px;font-family:'Barlow',sans-serif;}
+    input:focus{outline:none;border-color:var(--dourado);box-shadow:0 0 0 3px rgba(255,215,0,0.15);}
     .btn-principal{width:100%;padding:16px;background:linear-gradient(135deg,var(--dourado),var(--dourado-suave));color:var(--azul-escuro);border:none;border-radius:12px;font-size:1em;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s ease;}
     .btn-principal:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,215,0,0.4);}
     .btn-principal:disabled{opacity:0.6;cursor:not-allowed;}
-    #resultado,#resultadoDenuncia{margin-top:16px;padding:18px;border-radius:12px;display:none;line-height:1.7;}
+    #resultado,#resultadoDenuncia{margin-top:16px;padding:18px;border-radius:12px;display:none;line-height:1.7;animation:aparecer 0.4s ease;}
     .seguro{background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.5);color:#2ecc71;}
     .perigo{background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.5);color:#ff6b6b;}
     .alerta{background:rgba(243,156,18,0.12);border:1px solid rgba(243,156,18,0.5);color:#f39c12;}
+    .sucesso{background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.5);color:#2ecc71;}
     .loading-ia{display:none;margin-top:16px;padding:18px;background:rgba(0,82,155,0.15);border:1px solid rgba(0,82,155,0.3);border-radius:12px;text-align:center;}
     .loading-dots{display:inline-flex;gap:6px;margin-top:8px;}
     .loading-dots span{width:8px;height:8px;background:var(--dourado);border-radius:50%;animation:bounce 1.2s ease-in-out infinite;}
+    .loading-dots span:nth-child(2){animation-delay:0.2s;}
+    .loading-dots span:nth-child(3){animation-delay:0.4s;}
     @keyframes bounce{0%,80%,100%{transform:scale(0.8);opacity:0.5;}40%{transform:scale(1.2);opacity:1;}}
-    .rodape{text-align:center;margin-top:24px;padding:16px;font-size:0.78em;color:rgba(255,255,255,0.3);border-top:1px solid var(--vidro-borda);}
+    .rodape{text-align:center;margin-top:24px;padding:16px;font-size:0.78em;color:rgba(255,255,255,0.3);letter-spacing:0.5px;border-top:1px solid var(--vidro-borda);}
   </style>
 </head>
 <body>
@@ -89,14 +92,14 @@
     <p class="frase-cidade">💙 São Fidélis Protegida 🤍</p>
   </div>
 
-  <div class="card">
+  <div class="card" style="margin-bottom:16px;">
     <div class="chat-ia">
       <span class="robo">🤖</span>
       <div class="texto-ia">
         <strong>Olá, cidadão fidélense!</strong><br>
-        Agora com <strong>IA Sentinela</strong> ativa.<br>
-        Cole qualquer site ou Pix e eu analiso pra você! 🔍💙
-        <br><span class="badge-ativo">IA ONLINE</span>
+        Sistema de IA ativo para proteção da nossa cidade.<br>
+        Cole qualquer site ou Pix suspeito abaixo! 🔍💙
+        <br><span class="badge-ativo">IA ONLINE EM TEMPO REAL</span>
       </div>
     </div>
   </div>
@@ -114,7 +117,7 @@
       </div>
       <button class="btn-principal" id="btnVerificar" onclick="verificarComIA()">🔍 VERIFICAR COM IA</button>
       <div class="loading-ia" id="loadingIA">
-        <div style="color:var(--dourado);">🤖 IA ANALISANDO...</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1em;color:var(--dourado);">🤖 IA ANALISANDO...</div>
         <div class="loading-dots"><span></span><span></span><span></span></div>
       </div>
       <div id="resultado"></div>
@@ -129,22 +132,22 @@
         </select>
       </div>
       <div class="grupo-input">
-        <label>Endereço ou chave:</label>
-        <input type="text" id="valorDenuncia" placeholder="Cole aqui">
+        <label>Digite o endereço ou a chave:</label>
+        <input type="text" id="valorDenuncia" placeholder="Cole aqui o link ou a chave Pix">
       </div>
-      <button class="btn-principal" onclick="cadastrarDenuncia()">📢 ENVIAR DENÚNCIA</button>
+      <button class="btn-principal" onclick="cadastrarDenuncia()">📢 ENVIAR DENÚNCIA SEGURA</button>
       <div id="resultadoDenuncia"></div>
     </div>
   </div>
 
-  <div class="rodape" id="rodape">Protegendo São Fidélis | IA Segura 💙</div>
+  <div class="rodape" id="rodape">Protegendo São Fidélis | Sentinela Cidadão | 2026 💙</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-  // 🔗 LINK DO SEU CLOUDFLARE WORKER
+  // 🔗 ENDEREÇO DO SEU CLOUDFLARE WORKER
   const WORKER_URL = 'https://sentinela.barbosaferrera492.workers.dev';[cite: 1]
 
   // ── FIREBASE ──[cite: 1]
@@ -154,7 +157,7 @@
     projectId: "sentinela-cidad",
     databaseURL: "https://sentinela-cidad-default-rtdb.firebaseio.com"
   };
-  try { firebase.initializeApp(firebaseConfig); } catch(e){}
+  try { firebase.initializeApp(firebaseConfig); } catch(e) {}
 
   // ── ABAS ──[cite: 1]
   function mudarAba(nome) {
@@ -164,7 +167,7 @@
     document.getElementById('aba-' + nome).classList.add('ativa');
   }
 
-  // ── VERIFICAR COM IA (VIA WORKER) ──[cite: 1]
+  // ── VERIFICAR COM IA (VERSÃO BLINDADA) ──[cite: 1]
   async function verificarComIA() {[cite: 1]
     const entrada = document.getElementById('entradaUsuario').value.trim();[cite: 1]
     const resultado = document.getElementById('resultado');[cite: 1]
@@ -190,26 +193,36 @@
 
       let analise = null;
       try {
-        analise = JSON.parse(dados.resposta);[cite: 1]
+        // Limpeza de segurança para ler o JSON[cite: 1]
+        const textoLimpo = dados.resposta.replace(/```json/g, '').replace(/
+```/g, '').trim();[cite: 1]
+        analise = JSON.parse(textoLimpo);[cite: 1]
       } catch(e) {
+        // Fallback: extrair o que estiver entre { }[cite: 1]
         const match = dados.resposta.match(/\{[\s\S]*\}/);[cite: 1]
         if (match) analise = JSON.parse(match[0]);[cite: 1]
       }
 
       resultado.style.display = 'block';[cite: 1]
       if (analise && analise.nivel) {
+        // Aplica cor baseada no nível (perigo, alerta, seguro)[cite: 1]
         resultado.className = analise.nivel.toLowerCase();[cite: 1]
-        resultado.innerHTML = `<strong>${analise.titulo}</strong><br>${analise.analise}<br><small>💡 ${analise.dica}</small>`;[cite: 1]
+        resultado.innerHTML = `
+          <strong>🛡️ ${analise.titulo || 'ANÁLISE'}</strong><br>
+          ${analise.analise || ''}<br>
+          <small style="display:block;margin-top:8px;opacity:0.9;">💡 ${analise.dica || ''}</small>
+        `;[cite: 1]
       } else {
+        // Se a IA mandou apenas texto[cite: 1]
         resultado.className = 'alerta';[cite: 1]
-        resultado.innerHTML = dados.resposta;[cite: 1]
+        resultado.innerHTML = `🤖 <strong>Resposta:</strong><br>${dados.resposta}`;[cite: 1]
       }
     } catch(err) {
       loading.style.display = 'none';[cite: 1]
       btn.disabled = false;[cite: 1]
       resultado.style.display = 'block';[cite: 1]
       resultado.className = 'perigo';[cite: 1]
-      resultado.innerHTML = 'Erro ao conectar com a IA. Verifique o Worker.';[cite: 1]
+      resultado.innerHTML = '❌ Erro de conexão. Verifique o Worker no Cloudflare.';[cite: 1]
     }
   }
 
@@ -220,7 +233,7 @@
     if (!valor) return;[cite: 1]
     resDiv.style.display = 'block';[cite: 1]
     resDiv.className = 'sucesso';[cite: 1]
-    resDiv.innerHTML = '✅ Denúncia enviada para análise!';[cite: 1]
+    resDiv.innerHTML = '✅ Sua denúncia foi enviada para análise!';[cite: 1]
   }
 </script>
 </body>
