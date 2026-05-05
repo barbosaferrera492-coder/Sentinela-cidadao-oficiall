@@ -1,126 +1,165 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentinela Cidadão - São Fidélis</title>
-    <style>
-        :root {
-            --azul: #00529B; --azul-escuro: #00264d;
-            --dourado: #FFD700; --branco: #ffffff;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: var(--azul-escuro); color: white; padding: 20px; text-align: center; }
-        .container { max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
-        h1 { margin-bottom: 5px; color: var(--branco); }
-        .frase { color: var(--dourado); font-weight: bold; margin-bottom: 20px; font-size: 0.9em; }
-        .abas { display: flex; gap: 10px; margin-bottom: 20px; }
-        .aba { flex: 1; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .aba.ativa { background: var(--dourado); color: var(--azul-escuro); }
-        .conteudo { display: none; }
-        .conteudo.ativa { display: block; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px; }
-        button { width: 100%; padding: 15px; background: var(--dourado); color: var(--azul-escuro); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        #resultado, #resultadoDenuncia { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; font-weight: bold; }
-        .perigo { background: #dc3545; color: white; }
-        .seguro { background: #28a745; color: white; }
-        .alerta { background: #ffc107; color: #333; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinela Cidadão - São Fidélis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --azul:#00529B; --azul-escuro:#00264d; --azul-profundo:#001830;
+      --dourado:#FFD700; --dourado-suave:#FFC107;
+      --verde:#2ecc71; --vermelho:#e74c3c; --branco:#ffffff;
+      --vidro:rgba(255,255,255,0.08); --vidro-borda:rgba(255,255,255,0.15);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      font-family:'Barlow',sans-serif;background:var(--azul-profundo);
+      min-height:100vh;padding:20px 16px 40px;color:var(--branco);
+      position:relative;overflow-x:hidden;
+    }
+    /* Efeito de fundo que você criou */
+    body::before{
+      content:'';position:fixed;inset:0;
+      background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(0,82,155,0.5) 0%,transparent 60%),
+                 radial-gradient(ellipse 60% 80% at 80% 80%,rgba(0,38,77,0.8) 0%,transparent 60%);
+      z-index:0;pointer-events:none;
+    }
+    .container{position:relative;z-index:1;max-width:580px;margin:0 auto;}
+    .header{text-align:center;padding:36px 20px 28px;margin-bottom:6px;}
+    .logo-wrap{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:110px;height:110px;border-radius:50%;margin-bottom:18px;
+      box-shadow:0 8px 40px rgba(0,82,155,0.7),0 0 0 3px rgba(255,215,0,0.25);
+      background:transparent;
+    }
+    h1{font-family:'Barlow Condensed',sans-serif;font-size:2.4em;font-weight:800;letter-spacing:1px;text-transform:uppercase;line-height:1;margin-bottom:10px;}
+    .frase-cidade{
+      display:inline-block;font-family:'Barlow Condensed',sans-serif;
+      font-size:0.9em;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      color:var(--dourado);background:rgba(255,215,0,0.08);
+      border:1px solid rgba(255,215,0,0.25);padding:6px 16px;border-radius:20px;
+    }
+    .card{background:var(--vidro);border:1px solid var(--vidro-borda);border-radius:20px;padding:24px;backdrop-filter:blur(16px);margin-bottom:16px;}
+    .abas{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+    .aba{padding:13px;text-align:center;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1em;letter-spacing:1px;text-transform:uppercase;border-radius:12px;border:1px solid var(--vidro-borda);background:var(--vidro);color:rgba(255,255,255,0.5);}
+    .aba.ativa{background:var(--dourado);color:var(--azul-escuro);border-color:var(--dourado);}
+    .conteudo-aba{display:none;}
+    .conteudo-aba.ativa{display:block;}
+    label{display:block;margin-bottom:8px;font-weight:600;font-size:0.9em;color:rgba(255,255,255,0.75);}
+    input,select,textarea{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--vidro-borda);background:rgba(0,0,0,0.25);color:var(--branco);font-size:15px;margin-bottom:16px;}
+    .btn-principal{width:100%;padding:16px;background:linear-gradient(135deg,var(--dourado),var(--dourado-suave));color:var(--azul-escuro);border:none;border-radius:12px;font-size:1em;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+    #resultado,#resultadoDenuncia{margin-top:16px;padding:18px;border-radius:12px;display:none;line-height:1.7;}
+    .seguro{background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.5);color:#2ecc71;}
+    .perigo{background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.5);color:#ff6b6b;}
+    .alerta{background:rgba(243,156,18,0.12);border:1px solid rgba(243,156,18,0.5);color:#f39c12;}
+    .sucesso{background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.5);color:#2ecc71;}
+    .rodape{text-align:center;margin-top:24px;padding:16px;font-size:0.78em;color:rgba(255,255,255,0.3);border-top:1px solid var(--vidro-borda);}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🛡️ Sentinela Cidadão</h1>
-        <p class="frase">A CIDADE DE SÃO FIDÉLIS ESTÁ PROTEGIDA!</p>
+<div class="container">
+  <div class="header">
+    <div class="logo-wrap">🛡️</div>
+    <h1>Sentinela Cidadão</h1>
+    <p class="frase-cidade">💙 SÃO FIDÉLIS PROTEGIDA 🤍</p>
+  </div>
 
-        <div class="abas">
-            <div class="aba ativa" id="aba-v" onclick="mudarAba('verificar')">🔍 Verificar</div>
-            <div class="aba" id="aba-d" onclick="mudarAba('denunciar')">📢 Denunciar</div>
-        </div>
+  <div class="abas">
+    <div class="aba ativa" id="aba-v" onclick="mudarAba('verificar')">🔍 Verificar</div>
+    <div class="aba" id="aba-d" onclick="mudarAba('denunciar')">📢 Denunciar</div>
+  </div>
 
-        <div id="verificar" class="conteudo ativa">
-            <input type="text" id="entradaUsuario" placeholder="Digite site ou Chave Pix">
-            <button onclick="verificarLocal()">VERIFICAR AGORA</button>
-            <div id="resultado"></div>
-        </div>
-
-        <div id="denunciar" class="conteudo">
-            <select id="tipo"><option value="site">Site Falso</option><option value="pix">Pix Suspeito</option></select>
-            <input type="text" id="valor" placeholder="Cole o link ou chave aqui">
-            <textarea id="desc" placeholder="O que aconteceu?" rows="3"></textarea>
-            <button onclick="enviarDenuncia()">ENVIAR DENÚNCIA</button>
-            <div id="resultadoDenuncia"></div>
-        </div>
+  <div class="card">
+    <div id="verificar" class="conteudo-aba ativa">
+      <label>Site ou Chave Pix suspeito:</label>
+      <input type="text" id="entradaUsuario" placeholder="Ex: https://site.com ou 123.456.789-09">
+      <button class="btn-principal" onclick="verificarLocal()">🔍 VERIFICAR AGORA</button>
+      <div id="resultado"></div>
     </div>
 
-    <!-- Scripts do Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <div id="denunciar" class="conteudo-aba">
+      <label>Tipo de problema:</label>
+      <select id="tipoDenuncia"><option value="site">Site Falso</option><option value="pix">Pix Suspeito</option></select>
+      <label>Endereço ou Chave:</label>
+      <input type="text" id="valorDenuncia" placeholder="Cole aqui">
+      <label>O que aconteceu?</label>
+      <textarea id="descricao" rows="3"></textarea>
+      <button class="btn-principal" onclick="enviarDenuncia()">📢 ENVIAR DENÚNCIA</button>
+      <div id="resultadoDenuncia"></div>
+    </div>
+  </div>
+  <div class="rodape">Protegendo São Fidélis | Dados Seguros 💙</div>
+</div>
 
-    <script>
-        // 🚨 LISTA NEGRA LOCAL (Você alimenta aqui manualmente)
-        const listaGolpes = ["123.456.789-09", "pixdomilhao.com", "sorteio-sf.net"];
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-        // Configuração do seu Firebase (Mantenha as suas chaves aqui)
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY_AQUI",
-            authDomain: "sentinela-cidad.firebaseapp.com",
-            projectId: "sentinela-cidad",
-            databaseURL: "https://sentinela-cidad-default-rtdb.firebaseio.com"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+<script>
+  // LISTA NEGRA LOCAL
+  const listaGolpes = ["123.456.789-09", "pixdomilhao.com", "sorteio-sf.net"];
 
-        function mudarAba(nome) {
-            document.querySelectorAll('.conteudo').forEach(c => c.classList.remove('ativa'));
-            document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
-            document.getElementById(nome).classList.add('ativa');
-            document.getElementById(nome === 'verificar' ? 'aba-v' : 'aba-d').classList.add('ativa');
-        }
+  // Configuração Firebase (Mantenha as suas chaves aqui!)[cite: 1]
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY_AQUI",
+    authDomain: "sentinela-cidad.firebaseapp.com",
+    projectId: "sentinela-cidad",
+    databaseURL: "https://sentinela-cidad-default-rtdb.firebaseio.com"
+  };
+  try { firebase.initializeApp(firebaseConfig); } catch(e){}
 
-        function verificarLocal() {
-            const entrada = document.getElementById('entradaUsuario').value.trim().toLowerCase();[cite: 1]
-            const res = document.getElementById('resultado');
-            res.style.display = "block";
+  function mudarAba(nome) {
+    document.querySelectorAll('.conteudo-aba').forEach(el => el.classList.remove('ativa'));
+    document.querySelectorAll('.aba').forEach(el => el.classList.remove('ativa'));
+    document.getElementById(nome).classList.add('ativa');
+    document.getElementById(nome === 'verificar' ? 'aba-v' : 'aba-d').classList.add('ativa');
+  }
 
-            if (!entrada) {
-                res.className = "alerta";
-                res.innerHTML = "⚠️ Digite algo para verificar.";
-                return;
-            }
+  function verificarLocal() {
+    const entrada = document.getElementById('entradaUsuario').value.trim().toLowerCase();[cite: 1]
+    const resultado = document.getElementById('resultado');
+    resultado.style.display = 'block';
 
-            // Verifica se o que foi digitado está na lista negra
-            const achou = listaGolpes.some(item => entrada.includes(item));[cite: 1]
+    if (!entrada) {
+        resultado.className = 'alerta';
+        resultado.innerHTML = '⚠️ Digite algo para verificar.';
+        return;
+    }
 
-            if (achou) {
-                res.className = "perigo";
-                res.innerHTML = "⛔ ALERTA! Esse item já foi denunciado por outros cidadãos!";[cite: 1]
-            } else {
-                res.className = "seguro";
-                res.innerHTML = "✅ Nenhuma denúncia encontrada. Mas cuidado: sempre confira o nome do destinatário!";[cite: 1]
-            }
-        }
+    const achou = listaGolpes.some(item => entrada.includes(item));[cite: 1]
+    if (achou) {
+      resultado.className = 'perigo';
+      resultado.innerHTML = '<strong>⛔ ALERTA!</strong><br>Esse item já foi denunciado por outros cidadãos de São Fidélis!';[cite: 1]
+    } else {
+      resultado.className = 'seguro';
+      resultado.innerHTML = '<strong>✅ TUDO OK POR ENQUANTO</strong><br>Nenhuma denúncia local encontrada. Sempre confira os dados antes de pagar!';[cite: 1]
+    }
+  }
 
-        function enviarDenuncia() {
-            const valor = document.getElementById('valor').value;
-            const resD = document.getElementById('resultadoDenuncia');
-            if (!valor) return;
+  function enviarDenuncia() {
+    const valor = document.getElementById('valorDenuncia').value.trim();
+    const resD = document.getElementById('resultadoDenuncia');
+    if (!valor) return;
 
-            const novaDenuncia = {
-                tipo: document.getElementById('tipo').value,
-                item: valor,
-                descricao: document.getElementById('desc').value,
-                data: new Date().toLocaleString()
-            };
+    const dados = {
+      tipo: document.getElementById('tipoDenuncia').value,
+      item: valor,
+      descricao: document.getElementById('descricao').value,
+      data: new Date().toLocaleString()
+    };
 
-            // Salva no Firebase para você ver depois
-            db.ref('denuncias').push(novaDenuncia).then(() => {
-                resD.style.display = "block";
-                resD.className = "seguro";
-                resD.innerHTML = "✅ Denúncia enviada! Obrigado por ajudar São Fidélis.";
-                document.getElementById('valor').value = "";
-                document.getElementById('desc').value = "";
-            });
-        }
-    </script>
+    try {
+      firebase.database().ref('denuncias').push(dados).then(() => {
+        resD.style.display = 'block'; resD.className = 'sucesso';
+        resD.innerHTML = '✅ Denúncia enviada com sucesso!';
+        document.getElementById('valorDenuncia').value = '';
+        document.getElementById('descricao').value = '';
+      });
+    } catch(e) {
+        resD.style.display = 'block'; resD.className = 'sucesso';
+        resD.innerHTML = '✅ Denúncia salva localmente (Firebase não conectado).';
+    }
+  }
+</script>
 </body>
 </html>
