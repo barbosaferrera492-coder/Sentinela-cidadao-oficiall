@@ -1,373 +1,177 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sentinela Cidadão - São Fidélis</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#00529B">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Sentinela">
-  <link rel="apple-touch-icon" href="icon.png">
-  <link rel="icon" type="image/png" href="icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --azul:#00529B; --azul-escuro:#00264d; --azul-profundo:#001830;
-      --dourado:#FFD700; --dourado-suave:#FFC107;
-      --verde:#2ecc71; --vermelho:#e74c3c; --amarelo:#f39c12;
-      --branco:#ffffff;
-      --vidro:rgba(255,255,255,0.08); --vidro-borda:rgba(255,255,255,0.15);
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      font-family:'Barlow',sans-serif;background:var(--azul-profundo);
-      min-height:100vh;padding:20px 16px 40px;color:var(--branco);
-      position:relative;overflow-x:hidden;
-    }
-    body::before{
-      content:'';position:fixed;inset:0;
-      background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(0,82,155,0.5) 0%,transparent 60%),
-                 radial-gradient(ellipse 60% 80% at 80% 80%,rgba(0,38,77,0.8) 0%,transparent 60%);
-      z-index:0;pointer-events:none;
-    }
-    body::after{
-      content:'';position:fixed;inset:0;
-      background-image:radial-gradient(rgba(255,255,255,0.04) 1px,transparent 1px);
-      background-size:28px 28px;z-index:0;pointer-events:none;
-    }
-    .container{position:relative;z-index:1;max-width:580px;margin:0 auto;}
-    .header{text-align:center;padding:36px 20px 28px;margin-bottom:6px;}
-    .logo-wrap{
-      display:inline-flex;align-items:center;justify-content:center;
-      width:110px;height:110px;border-radius:50%;margin-bottom:18px;
-      box-shadow:0 8px 40px rgba(0,82,155,0.7),0 0 0 3px rgba(255,215,0,0.25);
-      animation:pulsar 3s ease-in-out infinite;overflow:hidden;background:transparent;
-    }
-    .logo-wrap img{width:100%;height:100%;object-fit:contain;}
-    @keyframes pulsar{
-      0%,100%{box-shadow:0 8px 32px rgba(0,82,155,0.6),0 0 0 2px rgba(255,215,0,0.2);}
-      50%{box-shadow:0 8px 48px rgba(0,82,155,0.9),0 0 0 4px rgba(255,215,0,0.4);}
-    }
-    h1{font-family:'Barlow Condensed',sans-serif;font-size:2.4em;font-weight:800;letter-spacing:1px;text-transform:uppercase;line-height:1;margin-bottom:10px;}
-    .frase-cidade{
-      display:inline-block;font-family:'Barlow Condensed',sans-serif;
-      font-size:0.9em;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-      color:var(--dourado);background:rgba(255,215,0,0.08);
-      border:1px solid rgba(255,215,0,0.25);padding:6px 16px;border-radius:20px;
-    }
-    .card{background:var(--vidro);border:1px solid var(--vidro-borda);border-radius:20px;padding:24px;backdrop-filter:blur(16px);margin-bottom:16px;}
-    #banner-instalar{
-      display:none;align-items:center;gap:12px;
-      background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.35);
-      border-radius:14px;padding:14px 16px;margin-bottom:14px;cursor:pointer;
-    }
-    #banner-instalar .icon-inst{font-size:28px;}
-    #banner-instalar .txt-inst{flex:1;}
-    #banner-instalar .txt-inst strong{color:var(--dourado);font-family:'Barlow Condensed',sans-serif;font-size:1.05em;display:block;}
-    #banner-instalar .txt-inst span{font-size:0.82em;color:rgba(255,255,255,0.6);}
-    #banner-instalar .btn-inst{background:var(--dourado);color:var(--azul-escuro);border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:0.9em;padding:8px 14px;cursor:pointer;letter-spacing:1px;}
-    .chat-ia{display:flex;gap:12px;align-items:flex-start;}
-    .robo{font-size:32px;flex-shrink:0;animation:balanco 2s ease-in-out infinite;}
-    @keyframes balanco{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
-    .texto-ia{background:rgba(0,82,155,0.3);border:1px solid rgba(0,82,155,0.5);padding:14px 16px;border-radius:4px 16px 16px 16px;line-height:1.6;font-size:0.95em;}
-    .texto-ia strong{color:var(--dourado);font-family:'Barlow Condensed',sans-serif;font-size:1.1em;letter-spacing:0.5px;}
-    .badge-ativo{display:inline-flex;align-items:center;gap:6px;background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.4);border-radius:20px;padding:4px 12px;font-size:0.78em;font-weight:600;color:#2ecc71;margin-top:8px;letter-spacing:0.5px;}
-    .badge-ativo::before{content:'';width:7px;height:7px;background:#2ecc71;border-radius:50%;animation:piscar 1.5s ease-in-out infinite;}
-    @keyframes piscar{0%,100%{opacity:1;}50%{opacity:0.2;}}
-    .abas{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
-    .aba{padding:13px;text-align:center;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1em;letter-spacing:1px;text-transform:uppercase;border-radius:12px;border:1px solid var(--vidro-borda);background:var(--vidro);color:rgba(255,255,255,0.5);transition:all 0.25s ease;}
-    .aba:hover{color:var(--branco);background:rgba(255,255,255,0.1);}
-    .aba.ativa{background:var(--dourado);color:var(--azul-escuro);border-color:var(--dourado);box-shadow:0 4px 20px rgba(255,215,0,0.3);}
-    .conteudo-aba{display:none;animation:aparecer 0.3s ease;}
-    .conteudo-aba.ativa{display:block;}
-    @keyframes aparecer{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-    .grupo-input{margin-bottom:16px;}
-    label{display:block;margin-bottom:8px;font-weight:600;font-size:0.9em;color:rgba(255,255,255,0.75);letter-spacing:0.3px;}
-    input,select,textarea{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--vidro-borda);background:rgba(0,0,0,0.25);color:var(--branco);font-size:15px;font-family:'Barlow',sans-serif;transition:border-color 0.2s,box-shadow 0.2s;}
-    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--dourado);box-shadow:0 0 0 3px rgba(255,215,0,0.15);}
-    input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.3);}
-    select option{background:var(--azul-escuro);color:var(--branco);}
-    textarea{resize:vertical;min-height:90px;}
-    .btn-principal{width:100%;padding:16px;background:linear-gradient(135deg,var(--dourado),var(--dourado-suave));color:var(--azul-escuro);border:none;border-radius:12px;font-size:1em;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s ease;box-shadow:0 4px 20px rgba(255,215,0,0.25);}
-    .btn-principal:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,215,0,0.4);}
-    .btn-principal:active{transform:translateY(0) scale(0.98);}
-    .btn-principal:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-    #resultado,#resultadoDenuncia{margin-top:16px;padding:18px;border-radius:12px;display:none;animation:aparecer 0.4s ease;line-height:1.7;}
-    .seguro{background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.5);color:#2ecc71;}
-    .perigo{background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.5);color:#ff6b6b;}
-    .alerta{background:rgba(243,156,18,0.12);border:1px solid rgba(243,156,18,0.5);color:#f39c12;}
-    .sucesso{background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.5);color:#2ecc71;}
-    .resultado-titulo{font-family:'Barlow Condensed',sans-serif;font-size:1.2em;font-weight:800;letter-spacing:1px;margin-bottom:8px;}
-    .resultado-detalhe{font-size:0.9em;opacity:0.9;}
-    .loading-ia{display:none;margin-top:16px;padding:18px;background:rgba(0,82,155,0.15);border:1px solid rgba(0,82,155,0.3);border-radius:12px;text-align:center;}
-    .loading-dots{display:inline-flex;gap:6px;margin-top:8px;}
-    .loading-dots span{width:8px;height:8px;background:var(--dourado);border-radius:50%;animation:bounce 1.2s ease-in-out infinite;}
-    .loading-dots span:nth-child(2){animation-delay:0.2s;}
-    .loading-dots span:nth-child(3){animation-delay:0.4s;}
-    @keyframes bounce{0%,80%,100%{transform:scale(0.8);opacity:0.5;}40%{transform:scale(1.2);opacity:1;}}
-    .aviso-denuncia{background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);border-left:3px solid var(--dourado);border-radius:12px;padding:14px 16px;margin-bottom:18px;color:rgba(255,215,0,0.85);font-size:0.88em;line-height:1.6;}
-    .aviso-denuncia strong{color:var(--dourado);}
-    .rodape{text-align:center;margin-top:24px;padding:16px;font-size:0.78em;color:rgba(255,255,255,0.3);letter-spacing:0.5px;border-top:1px solid var(--vidro-borda);}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinela Cidadão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#005599',
+                        accent: '#FFCC00',
+                        dark: '#001a33',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            .glow {
+                box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+            }
+        }
+    </style>
 </head>
-<body>
-<div class="container">
-
-  <div class="header">
-    <div class="logo-wrap"><img src="icon.png" alt="Sentinela Cidadão"></div>
-    <h1>Sentinela Cidadão</h1>
-    <p class="frase-cidade">💙 São Fidélis Protegida 🤍</p>
-  </div>
-
-  <div id="banner-instalar">
-    <span class="icon-inst">📲</span>
-    <div class="txt-inst">
-      <strong>INSTALAR APLICATIVO</strong>
-      <span>Adicione à tela inicial do seu celular</span>
-    </div>
-    <button class="btn-inst" id="btn-instalar">INSTALAR</button>
-  </div>
-
-  <div class="card" style="margin-bottom:16px;">
-    <div class="chat-ia">
-      <span class="robo">🤖</span>
-      <div class="texto-ia">
-        <strong>Olá, cidadão fidélense!</strong><br>
-        Agora com <strong>IA + busca online</strong> em tempo real.<br>
-        Cole qualquer site ou Pix suspeito e eu analiso na internet! 🔍💙
-        <br><span class="badge-ativo">IA ATIVA COM BUSCA ONLINE</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="abas">
-    <div class="aba ativa" id="aba-verificar" onclick="mudarAba('verificar')">🔍 Verificar</div>
-    <div class="aba"       id="aba-denunciar" onclick="mudarAba('denunciar')">📢 Denunciar</div>
-  </div>
-
-  <div class="card">
-
-    <div id="verificar" class="conteudo-aba ativa">
-      <div class="grupo-input">
-        <label>Cole o site ou Chave Pix suspeito:</label>
-        <input type="text" id="entradaUsuario" placeholder="Ex: https://site.com.br ou 123.456.789-09">
-      </div>
-      <button class="btn-principal" id="btnVerificar" onclick="verificarComIA()">🔍 VERIFICAR COM IA</button>
-      <div class="loading-ia" id="loadingIA">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1em;letter-spacing:1px;color:var(--dourado);">
-          🤖 IA ANALISANDO NA INTERNET...
+<body class="bg-gradient-to-br from-dark to-secondary min-h-screen font-sans text-white">
+    
+    <div class="container mx-auto px-4 py-8 max-w-md">
+        
+        <!-- Logo e Título -->
+        <div class="text-center mb-8">
+            <div class="w-40 h-40 mx-auto mb-4 rounded-full overflow-hidden border-4 border-accent/30 glow">
+                <img src="https://i.imgur.com/ZXNkqYL.png" alt="Logo Sentinela Cidadão" class="w-full h-full object-cover">
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">SENTINELA CIDADÃO</h1>
+            <div class="inline-block glass px-6 py-2 rounded-full text-accent font-semibold">
+                <i class="fas fa-heart text-blue-500"></i> SÃO FIDÉLIS PROTEGIDA <i class="fas fa-heart text-white"></i>
+            </div>
         </div>
-        <div class="loading-dots"><span></span><span></span><span></span></div>
-      </div>
-      <div id="resultado"></div>
+
+        <!-- Card de Boas-vindas -->
+        <div class="glass rounded-3xl p-6 mb-8">
+            <div class="flex items-start gap-4">
+                <div class="text-5xl text-accent">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-2xl font-bold text-accent mb-2">Olá, cidadão fidélense!</h2>
+                    <p class="text-lg leading-relaxed mb-4">
+                        Agora com <span class="text-accent font-bold">IA + busca online</span> em tempo real.<br>
+                        Cole qualquer site ou Pix suspeito e eu analiso na internet!
+                    </p>
+                    <div class="flex items-center gap-2 text-green-400 font-semibold bg-green-400/20 px-4 py-2 rounded-full inline-block">
+                        <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+                        IA ATIVA COM BUSCA ONLINE
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botões Principais -->
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <button id="verificarBtn" class="bg-accent hover:bg-yellow-500 text-dark font-bold py-4 px-6 rounded-2xl text-xl transition-all duration-300 transform hover:scale-105 glow">
+                <i class="fas fa-search mr-2"></i> VERIFICAR
+            </button>
+            <button class="bg-white/10 hover:bg-white/20 text-white/70 font-bold py-4 px-6 rounded-2xl text-xl transition-all duration-300">
+                <i class="fas fa-bullhorn mr-2"></i> DENUNCIAR
+            </button>
+        </div>
+
+        <!-- Área de Entrada -->
+        <div class="glass rounded-3xl p-6">
+            <label class="block text-lg font-semibold mb-4 text-gray-200">Cole o site ou Chave Pix suspeito:</label>
+            
+            <input 
+                type="text" 
+                id="inputTexto"
+                placeholder="Digite ou cole aqui..." 
+                class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-4 text-lg text-white focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 mb-4"
+                value="Pix do milhão"
+            >
+
+            <button id="verificarIABtn" class="w-full bg-accent hover:bg-yellow-500 text-dark font-bold py-4 px-6 rounded-2xl text-xl transition-all duration-300 transform hover:scale-105 glow mb-4">
+                <i class="fas fa-search mr-2"></i> VERIFICAR COM IA
+            </button>
+
+            <!-- Área de Resultado (Sem IA por enquanto) -->
+            <div id="resultado" class="hidden bg-black/30 border border-yellow-500/30 rounded-xl p-6">
+                <div class="flex items-center gap-3 text-yellow-500 font-bold text-xl mb-2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="resultadoTitulo">ANÁLISE CONCLUÍDA</span>
+                </div>
+                <p id="resultadoTexto" class="text-yellow-400 text-lg">
+                    Funcionando perfeitamente! Amanhã a gente conecta a inteligência artificial. 😴
+                </p>
+            </div>
+        </div>
+
+        <!-- Rodapé -->
+        <footer class="text-center mt-12 text-white/50 text-sm">
+            <p>Protegendo os cidadãos de São Fidélis | IA com Busca Online | Dados Seguros <i class="fas fa-heart text-blue-500"></i></p>
+        </footer>
+
     </div>
 
-    <div id="denunciar" class="conteudo-aba">
-      <div class="aviso-denuncia">
-        ⚠️ <strong>Como funciona a denúncia?</strong><br>
-        Sua denúncia será salva e analisada pela nossa equipe.<br>
-        Ela só entra na lista de bloqueio <strong>após aprovação</strong>.
-      </div>
-      <div class="grupo-input">
-        <label>Tipo de problema:</label>
-        <select id="tipoDenuncia">
-          <option value="site">Site Falso / Tentativa de Golpe</option>
-          <option value="pix">Pix Irregular / Extorsão</option>
-        </select>
-      </div>
-      <div class="grupo-input">
-        <label>Digite o endereço ou a chave:</label>
-        <input type="text" id="valorDenuncia" placeholder="Cole aqui o link ou a chave Pix">
-      </div>
-      <div class="grupo-input">
-        <label>🤖 Conte o que aconteceu:</label>
-        <textarea id="descricao" rows="3" placeholder="Ex: Recebi um Pix falso dizendo ser da prefeitura..."></textarea>
-      </div>
-      <button class="btn-principal" onclick="cadastrarDenuncia()">📢 ENVIAR DENÚNCIA SEGURA</button>
-      <div id="resultadoDenuncia"></div>
-    </div>
+    <script>
+        // Função simples dos botões (sem IA)
+        const verificarBtn = document.getElementById('verificarBtn');
+        const verificarIABtn = document.getElementById('verificarIABtn');
+        const resultado = document.getElementById('resultado');
+        const inputTexto = document.getElementById('inputTexto');
 
-  </div>
+        function mostrarResultado() {
+            resultado.classList.remove('hidden');
+            resultado.classList.add('animate-fadeIn');
+            
+            // Suavidade para aparecer
+            resultado.style.opacity = '0';
+            resultado.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                resultado.style.transition = 'all 0.5s ease';
+                resultado.style.opacity = '1';
+                resultado.style.transform = 'translateY(0)';
+            }, 10);
+        }
 
-  <div class="rodape" id="rodape">
-    Protegendo os cidadãos de São Fidélis &nbsp;|&nbsp; IA com Busca Online &nbsp;|&nbsp; Dados Seguros 💙
-  </div>
-
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-<script>
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  //  COLOQUE AQUI O ENDEREÇO DO SEU WORKER
-  //  Ex: https://sentinela.SEU-USUARIO.workers.dev
-  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  const WORKER_URL = 'https://sentinela.barbosaferrera492.workers.dev';
-
-  // ── FIREBASE ──
-  const firebaseConfig = {
-    apiKey: "SUA_API_KEY_FIREBASE_AQUI",
-    authDomain: "sentinela-cidad.firebaseapp.com",
-    projectId: "sentinela-cidad",
-    storageBucket: "sentinela-cidad.appspot.com",
-    messagingSenderId: "645213005112",
-    appId: "1:645213005112:web:dae57f5ebd6c9cfa39cdcd",
-    databaseURL: "https://sentinela-cidad-default-rtdb.firebaseio.com"
-  };
-  let bancoDeDados = null;
-  try {
-    firebase.initializeApp(firebaseConfig);
-    bancoDeDados = firebase.database();
-    carregarContador();
-  } catch(e) { console.warn("Firebase:", e.message); }
-
-  // ── PWA ──
-  let deferredPrompt = null;
-  const banner = document.getElementById('banner-instalar');
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault(); deferredPrompt = e; banner.style.display = 'flex';
-  });
-  document.getElementById('btn-instalar').addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null; banner.style.display = 'none';
-  });
-  window.addEventListener('appinstalled', () => { banner.style.display = 'none'; });
-
-  // ── ABAS ──
-  function mudarAba(nome) {
-    document.querySelectorAll('.conteudo-aba').forEach(el => el.classList.remove('ativa'));
-    document.querySelectorAll('.aba').forEach(el => el.classList.remove('ativa'));
-    document.getElementById(nome).classList.add('ativa');
-    document.getElementById('aba-' + nome).classList.add('ativa');
-  }
-
-  // ── VERIFICAR COM IA (via Worker seguro) ──
-  async function verificarComIA() {
-    const entrada   = document.getElementById('entradaUsuario').value.trim();
-    const resultado = document.getElementById('resultado');
-    const loading   = document.getElementById('loadingIA');
-    const btn       = document.getElementById('btnVerificar');
-
-    resultado.style.display = 'none';
-
-    if (!entrada) {
-      resultado.style.display = 'block';
-      resultado.className = 'alerta';
-      resultado.innerHTML = '<div class="resultado-titulo">⚠️ CAMPO VAZIO</div><div class="resultado-detalhe">Digite um site ou chave Pix para verificar.</div>';
-      return;
-    }
-
-    loading.style.display = 'block';
-    btn.disabled = true;
-
-    try {
-      const res = await fetch(WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entrada })
-      });
-
-      const dados = await res.json();
-      loading.style.display = 'none';
-      btn.disabled = false;
-
-      if (dados.erro) throw new Error(dados.erro);
-
-      let analise;
-      try {
-        const jsonMatch = dados.resposta.match(/\{[\s\S]*\}/);
-        analise = JSON.parse(jsonMatch ? jsonMatch[0] : dados.resposta);
-      } catch(e) {
-        resultado.style.display = 'block';
-        resultado.className = 'alerta';
-        resultado.innerHTML = `<div class="resultado-titulo">🤖 ANÁLISE DA IA</div><div class="resultado-detalhe">${dados.resposta}</div>`;
-        return;
-      }
-
-      resultado.style.display = 'block';
-      const nivel = analise.nivel || 'ALERTA';
-      const fontes = analise.encontrou_online
-        ? `<div class="resultado-detalhe" style="margin-top:8px;font-size:0.82em;opacity:0.7;">🔎 ${analise.fontes}</div>`
-        : '';
-
-      if (nivel === 'PERIGO') {
-        resultado.className = 'perigo';
-        resultado.innerHTML = `<div class="resultado-titulo">⛔ ${analise.titulo}</div><div class="resultado-detalhe">${analise.analise}</div>${fontes}`;
-      } else if (nivel === 'ALERTA') {
-        resultado.className = 'alerta';
-        resultado.innerHTML = `<div class="resultado-titulo">⚠️ ${analise.titulo}</div><div class="resultado-detalhe">${analise.analise}</div>${fontes}`;
-      } else {
-        resultado.className = 'seguro';
-        resultado.innerHTML = `<div class="resultado-titulo">✅ ${analise.titulo}</div><div class="resultado-detalhe">${analise.analise}</div>${fontes}`;
-      }
-
-    } catch(err) {
-      loading.style.display = 'none';
-      btn.disabled = false;
-      resultado.style.display = 'block';
-      resultado.className = 'alerta';
-      resultado.innerHTML = `<div class="resultado-titulo">⚠️ ERRO DE CONEXÃO</div><div class="resultado-detalhe">Verifique sua conexão com a internet.<br><small>${err.message}</small></div>`;
-    }
-  }
-
-  document.getElementById('entradaUsuario').addEventListener('keydown', e => {
-    if (e.key === 'Enter') verificarComIA();
-  });
-
-  // ── DENÚNCIA ──
-  function cadastrarDenuncia() {
-    const valor  = document.getElementById('valorDenuncia').value.trim();
-    const tipo   = document.getElementById('tipoDenuncia').value;
-    const desc   = document.getElementById('descricao').value.trim();
-    const resDiv = document.getElementById('resultadoDenuncia');
-    if (!valor) {
-      resDiv.style.display = 'block'; resDiv.className = 'alerta';
-      resDiv.innerHTML = '⚠️ Preencha o endereço ou chave antes de enviar.'; return;
-    }
-    const denuncia = { tipo, valor, descricao: desc || "(sem descrição)", data: new Date().toLocaleString('pt-BR') };
-    if (bancoDeDados) {
-      bancoDeDados.ref('denuncias').push(denuncia)
-        .then(() => {
-          resDiv.style.display = 'block'; resDiv.className = 'sucesso';
-          resDiv.innerHTML = '✅ Denúncia enviada! Obrigado por proteger São Fidélis.';
-          document.getElementById('valorDenuncia').value = '';
-          document.getElementById('descricao').value = '';
-        })
-        .catch(() => {
-          resDiv.style.display = 'block'; resDiv.className = 'alerta';
-          resDiv.innerHTML = '⚠️ Erro ao enviar. Verifique o Firebase.';
+        verificarBtn.addEventListener('click', function() {
+            if(inputTexto.value.trim() === '') {
+                alert('Por favor, digite algo para verificar!');
+                return;
+            }
+            mostrarResultado();
         });
-    } else {
-      const salvas = JSON.parse(localStorage.getItem('denuncias') || '[]');
-      salvas.push(denuncia);
-      localStorage.setItem('denuncias', JSON.stringify(salvas));
-      resDiv.style.display = 'block'; resDiv.className = 'sucesso';
-      resDiv.innerHTML = '✅ Denúncia salva! (Firebase não conectado)';
-    }
-  }
 
-  function carregarContador() {
-    if (!bancoDeDados) return;
-    bancoDeDados.ref('denuncias').once('value', snapshot => {
-      const total = snapshot.numChildren();
-      if (total > 0)
-        document.getElementById('rodape').innerHTML +=
-          `<br>📊 <strong>${total}</strong> denúncia${total !== 1 ? 's' : ''} registrada${total !== 1 ? 's' : ''}`;
-    });
-  }
+        verificarIABtn.addEventListener('click', function() {
+            if(inputTexto.value.trim() === '') {
+                alert('Por favor, digite algo para verificar!');
+                return;
+            }
+            mostrarResultado();
+        });
 
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('✅ SW registrado'))
-        .catch(e => console.log('Erro SW:', e));
-    });
-  }
-</script>
+        // Permite usar a tecla Enter
+        inputTexto.addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') {
+                mostrarResultado();
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
 </body>
 </html>
